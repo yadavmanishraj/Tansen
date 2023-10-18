@@ -39,6 +39,8 @@ class BaseModel {
   final String type;
   @JsonKey(name: "perma_url")
   final String permaUrl;
+  @JsonKey(name: "explicit_content")
+  final String? explicitContent;
 
   const BaseModel({
     required this.id,
@@ -47,6 +49,7 @@ class BaseModel {
     required this.permaUrl,
     this.subtitle,
     this.image,
+    this.explicitContent,
   });
 
   factory BaseModel.fromJson(Map<String, dynamic> json) =>
