@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:isolate';
 
 import 'package:http/http.dart' as http;
+import 'package:jiosaavn_api/src/models/album.dart';
 import 'package:jiosaavn_api/src/models/album_details.dart';
 import 'package:jiosaavn_api/src/models/playlist.dart';
 
@@ -52,7 +53,16 @@ class JioSaavnApi {
 
       return MapEntry<String, List<BaseModel>>(
           modules[key]?['title'] ?? "Discover",
-          value.map((e) => BaseModel.fromJson(e)).toList());
+          value.map((e) {
+            final type = e['type'];
+            if (type == ModelType.album) {
+              return Album.fromJson(e);
+            } else if (type == ModelType.radio) {
+              return RadioModel.fromJson(e);
+            } else {
+              return BaseModel.fromJson(e);
+            }
+          }).toList());
     });
   }
 
