@@ -22,9 +22,11 @@ extension on BaseModel {
 
   String? get low => image?.replaceAll("150x150", "150x150");
 
-  String? get medium => image?.replaceAll("150x150", "50x50");
+  String? get medium => image?.replaceAll("150x150", "250x250");
 
-  String? get high => image?.replaceAll("150x150", "500x500");
+  String? get high => image?.replaceAll("150x150", "350x350");
+
+  String? get veryHigh => image?.replaceAll("150x150", "500x500");
 }
 
 @JsonSerializable()
