@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
+import 'package:muisc_repository/muisc_repository.dart';
 
 import '../home.dart';
 
@@ -71,11 +72,7 @@ class HomeView extends StatelessWidget {
                 borderRadius: BorderRadius.circular(50),
                 child: SizedBox(
                   child: CachedNetworkImage(
-                    imageUrl: data
-                            ?.elementAt(index)
-                            .image
-                            ?.replaceAll("150x150", "500x500") ??
-                        "",
+                    imageUrl: data?.elementAt(index).veryHigh ?? "",
                     fit: BoxFit.cover,
                   ),
                 ),
