@@ -17,7 +17,7 @@ class ModelType {
   static const unknown = "unknown";
 }
 
-extension on BaseModel {
+extension ImageQuality on BaseModel {
   String? get veryLow => image?.replaceAll("150x150", "50x50");
 
   String? get low => image?.replaceAll("150x150", "150x150");
