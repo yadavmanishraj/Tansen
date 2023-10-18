@@ -13,6 +13,7 @@ BaseModel _$BaseModelFromJson(Map<String, dynamic> json) => BaseModel(
       permaUrl: json['perma_url'] as String,
       subtitle: json['subtitle'] as String?,
       image: json['image'] as String?,
+      explicitContent: json['explicit_content'] as String?,
     );
 
 Map<String, dynamic> _$BaseModelToJson(BaseModel instance) => <String, dynamic>{
@@ -22,4 +23,5 @@ Map<String, dynamic> _$BaseModelToJson(BaseModel instance) => <String, dynamic>{
       'image': instance.image,
       'type': instance.type,
       'perma_url': instance.permaUrl,
+      'explicit_content': instance.explicitContent,
     };
