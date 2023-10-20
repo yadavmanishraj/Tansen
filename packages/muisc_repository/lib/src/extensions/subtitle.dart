@@ -14,10 +14,13 @@ String buildAlbumSubtitle(Album album) {
   if (artists == null) {
     return "";
   } else {
-    final primaryArtists = artists.artists.join(",");
-    final sedondaryArtists = artists.featuredArtists.join(",");
-    final featuredArtists = artists.primaryArtists.join(",");
+    final primaryArtists =
+        artists.artists.map((e) => e.name).toList().join(",");
+    final sedondaryArtists =
+        artists.featuredArtists.map((e) => e.name).toList().join(",");
+    final featuredArtists =
+        artists.primaryArtists.map((e) => e.name).toList().join(",");
 
-    return "$primaryArtists,$sedondaryArtists,$featuredArtists";
+    return "$primaryArtists$sedondaryArtists$featuredArtists";
   }
 }
