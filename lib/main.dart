@@ -13,10 +13,12 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        brightness: Brightness.light,
+        brightness: Brightness.dark,
+        colorSchemeSeed: Colors.greenAccent,
         useMaterial3: true,
-        fontFamily: "Inter",
+        fontFamily: "Foxcon",
       ),
       routerConfig: routes,
     );
