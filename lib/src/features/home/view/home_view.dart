@@ -1,7 +1,9 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get_it/get_it.dart';
+import 'package:muisc_repository/muisc_repository.dart';
+import 'package:tansen/src/widgets/art_display.dart';
 
 import '../home.dart';
 
@@ -30,8 +32,8 @@ class HomeView extends StatelessWidget {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Row(
               children: [
-                const Expanded(child: const Text("No connection")),
-                TextButton(onPressed: () {}, child: Text("Refresh"))
+                const Expanded(child: Text("No connection")),
+                TextButton(onPressed: () {}, child: const Text("Refresh"))
               ],
             ),
           ));
@@ -56,34 +58,182 @@ class HomeView extends StatelessWidget {
                     style: FilledButton.styleFrom(
                         backgroundColor: colorScheme.error),
                     onPressed: () {},
-                    icon: Icon(Icons.refresh),
-                    label: Text("Refresh"))
+                    icon: const Icon(Icons.refresh),
+                    label: const Text("Refresh"))
               ],
             ),
           );
         } else {
-          final data = state.data?.entries.elementAt(0).value;
-          return ListView.builder(
-            itemCount: data?.length ?? 0,
-            itemBuilder: (context, index) => Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(50),
-                child: SizedBox(
-                  child: CachedNetworkImage(
-                    imageUrl: data
-                            ?.elementAt(index)
-                            .image
-                            ?.replaceAll("150x150", "500x500") ??
-                        "",
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              ),
-            ),
+          final data = state.data?.entries;
+          return Scaffold(
+            body: HomeDataView(data: data),
+            backgroundColor: Colors.black,
           );
         }
       },
+    );
+  }
+}
+
+class HomeDataView extends StatefulWidget {
+  const HomeDataView({
+    super.key,
+    required this.data,
+  });
+
+  final Iterable<MapEntry<String, List<BaseModel>>>? data;
+
+  @override
+  State<HomeDataView> createState() => _HomeDataViewState();
+}
+
+class _HomeDataViewState extends State<HomeDataView> {
+  ScrollController scrollController = ScrollController();
+
+  var transparent = true;
+
+  @override
+  void initState() {
+    super.initState();
+
+    scrollController.addListener(() {
+      // log(scrollController.position.toString());
+      if (scrollController.position.pixels ==
+              scrollController.position.minScrollExtent &&
+          transparent != true) {
+        setState(() {
+          transparent = true;
+        });
+      } else if (transparent == true) {
+        setState(() {
+          transparent = false;
+        });
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final colorscheme = Theme.of(context).colorScheme;
+
+    return DecoratedBox(
+      decoration: BoxDecoration(
+          gradient: LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: [
+          colorscheme.primaryContainer.withOpacity(.5),
+          colorscheme.secondaryContainer.withOpacity(.2),
+          colorscheme.tertiaryContainer.withOpacity(.1),
+        ],
+      )),
+      child: CustomScrollView(
+        controller: scrollController,
+        slivers: [
+          SliverAppBar(
+            backgroundColor: Colors.transparent,
+            titleSpacing: 0,
+            titleTextStyle:
+                const TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+            actions: [IconButton(onPressed: () {}, icon: const Icon(Icons.search))],
+            leading: Padding(
+              padding: const EdgeInsets.only(left: 8),
+              child: SvgPicture.asset(
+                "assets/icons/icong.svg",
+                color: colorscheme.primary,
+              ),
+            ),
+            title: const Text(
+              "Tansen",
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontFamily: "Foxcon",
+                letterSpacing: -1,
+              ),
+            ),
+          ),
+          const SliverToBoxAdapter(
+            child: Padding(
+              padding: EdgeInsets.symmetric(vertical: 8.0),
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(left: 16.0),
+                      child: ThemedIcon(
+                          avatar: Icons.music_note_outlined, label: "Music"),
+                    ),
+                    ThemedIcon(
+                      avatar: Icons.podcasts,
+                      label: "Podcasts",
+                      selected: true,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(right: 16.0),
+                      child:
+                          ThemedIcon(avatar: Icons.bolt, label: "Audiobooks"),
+                    )
+                  ],
+                ),
+              ),
+            ),
+          ),
+          SliverList.builder(
+            itemCount: widget.data?.length ?? 0,
+            itemBuilder: (context, index) => Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16.0),
+              child: ArtContainer(
+                title: widget.data!.elementAt(index).key,
+                models: widget.data!.elementAt(index).value,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class ThemedIcon extends StatelessWidget {
+  const ThemedIcon({
+    super.key,
+    required this.avatar,
+    required this.label,
+    this.selected = false,
+  });
+
+  final String label;
+  final IconData avatar;
+  final bool selected;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 4.0),
+      child: FilterChip.elevated(
+          elevation: 0,
+          avatar: Icon(
+            avatar,
+            color: selected
+                ? Theme.of(context).colorScheme.inversePrimary
+                : Theme.of(context).colorScheme.onSurface,
+          ),
+          label: Text(
+            label,
+            style: TextStyle(
+              fontWeight: FontWeight.w400,
+              color: selected
+                  ? Theme.of(context).colorScheme.inversePrimary
+                  : Theme.of(context).colorScheme.onSurface,
+            ),
+          ),
+          selected: selected,
+          selectedColor: Theme.of(context).colorScheme.primary,
+          backgroundColor: colorScheme.primary.withOpacity(.2),
+          showCheckmark: false,
+          onSelected: (v) {}),
     );
   }
 }

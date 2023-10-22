@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
 extension _ on int {
@@ -36,7 +37,17 @@ class ScaffoldWithNavigator extends StatefulWidget {
 
 class _ScaffoldWithNavigatorState extends State<ScaffoldWithNavigator> {
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final color = Theme.of(context).colorScheme.surface;
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+        statusBarColor: color,
+        systemNavigationBarColor:
+            Theme.of(context).bottomNavigationBarTheme.unselectedItemColor));
     return Scaffold(
       body: widget.state,
       bottomNavigationBar: NavigationBar(
