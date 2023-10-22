@@ -14,7 +14,10 @@ RadioModel _$RadioModelFromJson(Map<String, dynamic> json) => RadioModel(
       image: json['image'] as String?,
       subtitle: json['subtitle'] as String?,
       explictContent: json['explicit_content'] as String?,
-      miniObject: json['mini_obj'] as bool?,
+      miniObject: json['mini_obj'] as bool? ?? true,
+      radioExtra: json['more_info'] == null
+          ? null
+          : RadioExtra.fromJson(json['more_info'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$RadioModelToJson(RadioModel instance) =>
@@ -27,6 +30,7 @@ Map<String, dynamic> _$RadioModelToJson(RadioModel instance) =>
       'perma_url': instance.permaUrl,
       'explicit_content': instance.explictContent,
       'mini_obj': instance.miniObject,
+      'more_info': instance.radioExtra,
     };
 
 RadioExtra _$RadioExtraFromJson(Map<String, dynamic> json) => RadioExtra(
