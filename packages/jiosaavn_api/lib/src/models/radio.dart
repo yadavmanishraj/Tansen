@@ -8,8 +8,10 @@ part 'radio.g.dart';
 class RadioModel extends BaseModel {
   @JsonKey(name: "explicit_content")
   final String? explictContent;
-  @JsonKey(name: "mini_obj")
+  @JsonKey(name: "mini_obj", defaultValue: true)
   final bool? miniObject;
+  @JsonKey(name: "more_info")
+  final RadioExtra? radioExtra;
   RadioModel({
     required super.id,
     required super.title,
@@ -19,6 +21,7 @@ class RadioModel extends BaseModel {
     super.subtitle,
     this.explictContent,
     this.miniObject,
+    this.radioExtra
   });
 
   factory RadioModel.fromJson(Map<String, dynamic> json) =>
