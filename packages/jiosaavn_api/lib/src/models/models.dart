@@ -5,3 +5,4 @@ export 'base_model_details.dart';
 export 'song.dart';
 export 'song_details.dart';
 export 'album.dart';
+export 'album_details.dart';

@@ -16,7 +16,9 @@ class JioSaavnApi {
 
   static const host = "jiosaavn.com";
   static const apiPath = "/api.php";
-  static const headers = <String, String>{};
+  static const headers = <String, String>{
+    HttpHeaders.cookieHeader: "L=hindi,english"
+  };
   static const params = {
     "ctx": "web6dot0",
     "api_version": "4",

@@ -1,7 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:go_router/go_router.dart';
 import 'package:muisc_repository/muisc_repository.dart';
+import 'package:tansen/src/features/player/bloc/music_player_bloc.dart';
 import 'package:tansen/src/widgets/basics.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ArtDisplay extends StatefulWidget {
   const ArtDisplay({super.key, required this.baseModel});
@@ -101,39 +105,50 @@ class ArtContainer extends StatelessWidget {
                 childAspectRatio: 215 / 167.33,
                 mainAxisSpacing: 16,
                 crossAxisSpacing: 16),
-            itemBuilder: (context, index) => Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                SizedBox(
-                  height: 167.33,
-                  width: 167.33,
-                  child: Center(
-                    child: ArtDisplay(
-                      baseModel: models.elementAt(index),
+            itemBuilder: (context, index) => InkWell(
+              onTap: () {
+                // context.read<MusicPlayerBloc>().add(
+                //     MusicPlayerAddEvent(baseModel: models.elementAt(index)));
+                context.push("/details",
+                    extra: GetIt.instance
+                        .get<MusicRepository>()
+                        .getAlbumDetails(
+                            models.elementAt(index).permaUrl, "album"));
+              },
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    height: 167.33,
+                    width: 167.33,
+                    child: Center(
+                      child: ArtDisplay(
+                        baseModel: models.elementAt(index),
+                      ),
                     ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 4.0),
-                  child: Text(
-                    models.elementAt(index).title!,
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 4.0),
+                    child: Text(
+                      models.elementAt(index).title!,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                          height: 1, fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  Text(
+                    models.elementAt(index).subText,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                        height: 1, fontSize: 16, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                        color: Theme.of(context)
+                            .colorScheme
+                            .onSurface
+                            .withOpacity(.5)),
                   ),
-                ),
-                Text(
-                  models.elementAt(index).subText,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                      color: Theme.of(context)
-                          .colorScheme
-                          .onSurface
-                          .withOpacity(.5)),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

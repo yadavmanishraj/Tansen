@@ -1,6 +1,16 @@
+import 'dart:ui';
+
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:muisc_repository/muisc_repository.dart';
+import 'package:tansen/src/features/player/bloc/music_player_bloc.dart';
+import 'package:tansen/src/features/player/view/mini_player_widget.dart';
+import 'package:tansen/src/features/player/view/play_pause_button.dart';
+import 'package:tansen/src/features/player/view/player_progress_view.dart';
+import 'package:tansen/src/widgets/art_display.dart';
 
 extension _ on int {
   String get route {
@@ -37,40 +47,150 @@ class ScaffoldWithNavigator extends StatefulWidget {
 
 class _ScaffoldWithNavigatorState extends State<ScaffoldWithNavigator> {
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final color = Theme.of(context).colorScheme.surface;
+    final colorScheme = Theme.of(context).colorScheme;
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-        statusBarColor: color,
-        systemNavigationBarColor:
-            Theme.of(context).bottomNavigationBarTheme.unselectedItemColor));
+        statusBarColor: colorScheme.surface,
+        systemNavigationBarColor: Colors.transparent));
     return Scaffold(
       body: widget.state,
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: widget.state.currentIndex,
-        onDestinationSelected: (value) {
-          widget.state.goBranch(value, initialLocation: value == 0);
-          setState(() {});
-        },
-        destinations: const [
-          NavigationDestination(
-              icon: Icon(Icons.home_outlined),
-              selectedIcon: Icon(Icons.home_filled),
-              label: "Home"),
-          NavigationDestination(
-              icon: Icon(Icons.explore_outlined),
-              selectedIcon: Icon(Icons.explore),
-              label: "Explore"),
-          NavigationDestination(
-              icon: Icon(Icons.library_music_outlined),
-              selectedIcon: Icon(Icons.library_music),
-              label: "Library"),
-        ],
+      extendBody: true,
+      bottomNavigationBar: ClipRect(
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 100, sigmaY: 100),
+          child: ColoredBox(
+            color: colorScheme.primaryContainer.withOpacity(.3),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  height: 60,
+                  child: MiniPlayerWidget(),
+                ),
+                PlayerProgressView(),
+                SizedBox(height: 16),
+                NavigationBar(
+                  elevation: 0,
+                  backgroundColor: Colors.transparent,
+                  surfaceTintColor: Colors.transparent,
+                  selectedIndex: widget.state.currentIndex,
+                  onDestinationSelected: (value) {
+                    widget.state.goBranch(value, initialLocation: value == 0);
+                    setState(() {});
+                  },
+                  height: 50,
+                  destinations: const [
+                    NavigationDestination(
+                        icon: Icon(Icons.home_outlined),
+                        selectedIcon: Icon(Icons.home_filled),
+                        label: "Home"),
+                    NavigationDestination(
+                        icon: Icon(Icons.explore_outlined),
+                        selectedIcon: Icon(Icons.explore),
+                        label: "Explore"),
+                    NavigationDestination(
+                        icon: Icon(Icons.library_music_outlined),
+                        selectedIcon: Icon(Icons.library_music),
+                        label: "Library"),
+                  ],
+                ),
+                // const SizedBox(height: 8),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
 }
+
+// class MiniPlayerWidget extends StatefulWidget {
+//   const MiniPlayerWidget({super.key});
+
+//   @override
+//   State<MiniPlayerWidget> createState() => _MiniPlayerWidgetState();
+// }
+
+// class _MiniPlayerWidgetState extends State<MiniPlayerWidget> {
+//   late final PageController pageController;
+//   @override
+//   void initState() {
+//     super.initState();
+//     pageController = PageController();
+//   }
+
+//   @override
+//   void didUpdateWidget(covariant MiniPlayerWidget oldWidget) {
+//     super.didUpdateWidget(oldWidget);
+//     pageController.animateToPage(context.read<MusicPlayerBloc>().state.index,
+//         duration: const Duration(milliseconds: 200), curve: Curves.bounceIn);
+//   }
+
+//   @override
+//   void didChangeDependencies() {
+//     super.didChangeDependencies();
+//     pageController.animateToPage(context.read<MusicPlayerBloc>().state.index,
+//         duration: const Duration(milliseconds: 200), curve: Curves.easeIn);
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Padding(
+//       padding: const EdgeInsets.symmetric(vertical: 8.0),
+//       child: Row(
+//         children: [
+//           Expanded(
+//               child: BlocConsumer<MusicPlayerBloc, MusicPlayerState>(
+//             listener: (context, state) {
+//               pageController.jumpToPage(state.index);
+//             },
+//             listenWhen: (previous, current) => previous.index != current.index,
+//             builder: (context, state) {
+//               return PageView.builder(
+//                 controller: pageController,
+//                 onPageChanged: (value) {
+//                   context
+//                       .read<MusicPlayerBloc>()
+//                       .add(MusicPlayerStateChangeIndex(index: value));
+//                 },
+//                 itemCount: state.qeue.length,
+//                 itemBuilder: (context, index) => Padding(
+//                   padding: const EdgeInsets.only(left: 8.0),
+//                   child: Row(
+//                     children: [
+//                       AspectRatio(
+//                           aspectRatio: 1 / 1,
+//                           child: ArtDisplay(baseModel: state.qeue[index])),
+//                       const SizedBox(width: 8),
+//                       Expanded(
+//                         child: Column(
+//                           crossAxisAlignment: CrossAxisAlignment.start,
+//                           mainAxisAlignment: MainAxisAlignment.center,
+//                           children: [
+//                             Text(
+//                               state.qeue[index].title!,
+//                               maxLines: 1,
+//                               overflow: TextOverflow.ellipsis,
+//                               style: const TextStyle(
+//                                   fontSize: 20, fontWeight: FontWeight.bold),
+//                             ),
+//                             Text(
+//                               state.qeue[index].subText,
+//                               maxLines: 1,
+//                               overflow: TextOverflow.ellipsis,
+//                             )
+//                           ],
+//                         ),
+//                       ),
+//                     ],
+//                   ),
+//                 ),
+//               );
+//             },
+//           )),
+//           const PlayPauseButton()
+//         ],
+//       ),
+//     );
+//   }
+// }

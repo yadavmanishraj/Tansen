@@ -37,6 +37,9 @@ extension DownloadExtension on SongDetails {
   bool get supportsHighQuality =>
       bool.tryParse(songDetailsExtra?.maxSupported ?? "false") ?? false;
 
+  SongQualitiy get download => SongQualitiy(
+      bitrate: "12kbps", downloadUrl: downloadUrl?.replaceAll("_96", "_320"));
+
   SongQualitiy get veryLow => SongQualitiy(
       bitrate: "12kbps", downloadUrl: downloadUrl?.replaceAll("_96", "_12"));
   SongQualitiy get low => SongQualitiy(

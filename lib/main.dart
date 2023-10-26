@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tansen/inject.dart';
+import 'package:tansen/src/features/player/bloc/music_player_bloc.dart';
 import 'package:tansen/src/routes/routes.dart';
 
 void main() async {
@@ -12,15 +14,18 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        brightness: Brightness.dark,
-        colorSchemeSeed: Colors.greenAccent,
-        useMaterial3: true,
-        fontFamily: "Foxcon",
+    return BlocProvider(
+      create: (context) => MusicPlayerBloc(),
+      child: MaterialApp.router(
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          brightness: Brightness.dark,
+          colorSchemeSeed: Colors.red,
+          useMaterial3: true,
+          fontFamily: "Foxcon",
+        ),
+        routerConfig: routes,
       ),
-      routerConfig: routes,
     );
   }
 }

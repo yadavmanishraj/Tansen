@@ -6,7 +6,7 @@ part 'album_details.g.dart';
 
 @JsonSerializable()
 class AlbumDetails extends BaseModelDetails {
-  final AlbumExtra? albumExtra;
+  final AlbumDetailsExtra? albumExtra;
   @JsonKey(name: "list")
   final List<SongDetails>? songs;
 
@@ -36,15 +36,15 @@ class AlbumDetails extends BaseModelDetails {
 }
 
 @JsonSerializable()
-class AlbumExtra extends BaseModelDetailsExtra {
-  AlbumExtra({
+class AlbumDetailsExtra extends BaseModelDetailsExtra {
+  AlbumDetailsExtra({
     required super.isDolbyContent,
     super.copyrightText,
     super.labelUrl,
     super.songCount,
   });
 
-  factory AlbumExtra.fromJson(Map<String, dynamic> json) =>
+  factory AlbumDetailsExtra.fromJson(Map<String, dynamic> json) =>
       _$AlbumExtraFromJson(json);
 
   @override

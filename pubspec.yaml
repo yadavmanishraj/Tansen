@@ -45,6 +45,11 @@ dependencies:
   path_provider: ^2.1.1
   animations: ^2.0.8
   flutter_svg: ^2.0.7
+  just_audio: ^0.9.35
+  just_audio_windows: ^0.2.0
+  audio_service: ^0.18.12
+  rxdart: ^0.27.7
+  html_unescape: ^2.0.0
 
 dev_dependencies:
   flutter_test:
@@ -70,6 +75,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/icons/
+    - assets/img/
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

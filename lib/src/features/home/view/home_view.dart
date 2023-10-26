@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get_it/get_it.dart';
 import 'package:muisc_repository/muisc_repository.dart';
+import 'package:tansen/src/features/player/view/play_pause_button.dart';
 import 'package:tansen/src/widgets/art_display.dart';
 
 import '../home.dart';
@@ -67,7 +68,9 @@ class HomeView extends StatelessWidget {
           final data = state.data?.entries;
           return Scaffold(
             body: HomeDataView(data: data),
-            backgroundColor: Colors.black,
+            backgroundColor: colorScheme.brightness == Brightness.light
+                ? Colors.white.withOpacity(.7)
+                : Colors.black.withOpacity(.7),
           );
         }
       },
@@ -135,7 +138,10 @@ class _HomeDataViewState extends State<HomeDataView> {
             titleSpacing: 0,
             titleTextStyle:
                 const TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-            actions: [IconButton(onPressed: () {}, icon: const Icon(Icons.search))],
+            actions: [
+              IconButton(onPressed: () {}, icon: const Icon(Icons.search)),
+              const PlayPauseButton()
+            ],
             leading: Padding(
               padding: const EdgeInsets.only(left: 8),
               child: SvgPicture.asset(
@@ -143,13 +149,13 @@ class _HomeDataViewState extends State<HomeDataView> {
                 color: colorscheme.primary,
               ),
             ),
-            title: const Text(
+            title: Text(
               "Tansen",
               style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontFamily: "Foxcon",
-                letterSpacing: -1,
-              ),
+                  fontWeight: FontWeight.bold,
+                  fontFamily: "Foxcon",
+                  letterSpacing: -1,
+                  color: colorscheme.primary),
             ),
           ),
           const SliverToBoxAdapter(

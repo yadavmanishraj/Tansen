@@ -9,6 +9,7 @@ environment:
 # Add regular dependencies here.
 dependencies:
   dart_des: ^1.0.2
+  html_unescape: ^2.0.0
   http: ^1.1.0
   json_annotation: ^4.8.1
   # path: ^1.8.0
