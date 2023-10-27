@@ -42,7 +42,8 @@ class MusicPlayerBloc extends Bloc<MusicPlayerEvent, MusicPlayerState> {
 
     on<MusicPlayerChangeIndexEvent>((event, emit) {
       log("${event.index}", name: "Index");
-      emit(state.copyWith(index: event.index));
+      emit(state.copyWith(
+          index: event.index, nowPlaying: state.qeue[event.index]));
     });
 
     on<MusicPlayerEventPlay>((event, emit) async {

@@ -1,7 +1,10 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:muisc_repository/muisc_repository.dart';
 import 'package:tansen/src/features/player/bloc/music_player_bloc.dart';
+import 'package:tansen/src/features/player/view/max_player.dart';
 import 'package:tansen/src/widgets/art_display.dart';
 
 import 'play_pause_button.dart';
@@ -21,6 +24,12 @@ class _MiniPlayerWidgetState extends State<MiniPlayerWidget> {
     super.initState();
     pageController = PageController();
     // isPlaying = context.read<MusicPlayerBloc>().state.state.playing;
+  }
+
+  @override
+  void didUpdateWidget(covariant MiniPlayerWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    log("MIMI Player", name: "MINIPlayer");
   }
 
   @override
@@ -46,35 +55,45 @@ class _MiniPlayerWidgetState extends State<MiniPlayerWidget> {
                       .add(MusicPlayerStateSeekIndex(index: value));
                 },
                 itemCount: state.qeue.length,
-                itemBuilder: (context, index) => Padding(
-                  padding: const EdgeInsets.only(left: 8.0),
-                  child: Row(
-                    children: [
-                      AspectRatio(
-                          aspectRatio: 1 / 1,
-                          child: ArtDisplay(baseModel: state.qeue[index])),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              state.qeue[index].title!,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.bold),
-                            ),
-                            Text(
-                              state.qeue[index].subText,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            )
-                          ],
+                itemBuilder: (context, index) => InkWell(
+                  onTap: () {
+                    showModalBottomSheet(
+                      isScrollControlled: true,
+                      useRootNavigator: true,
+                      context: context,
+                      builder: (context) => MaxPlayer(),
+                    );
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 8.0),
+                    child: Row(
+                      children: [
+                        AspectRatio(
+                            aspectRatio: 1 / 1,
+                            child: ArtDisplay(baseModel: state.qeue[index])),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                state.qeue[index].title!,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                    fontSize: 16, fontWeight: FontWeight.bold),
+                              ),
+                              Text(
+                                state.qeue[index].subText,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              )
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               );

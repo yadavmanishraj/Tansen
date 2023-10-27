@@ -107,13 +107,13 @@ class ArtContainer extends StatelessWidget {
                 crossAxisSpacing: 16),
             itemBuilder: (context, index) => InkWell(
               onTap: () {
-                // context.read<MusicPlayerBloc>().add(
-                //     MusicPlayerAddEvent(baseModel: models.elementAt(index)));
-                context.push("/details",
-                    extra: GetIt.instance
-                        .get<MusicRepository>()
-                        .getAlbumDetails(
-                            models.elementAt(index).permaUrl, "album"));
+                context.read<MusicPlayerBloc>().add(
+                    MusicPlayerAddEvent(baseModel: models.elementAt(index)));
+                // context.push("/details",
+                //     extra: GetIt.instance
+                //         .get<MusicRepository>()
+                //         .getAlbumDetails(
+                //             models.elementAt(index).permaUrl, "album"));
               },
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,

@@ -120,16 +120,7 @@ class _HomeDataViewState extends State<HomeDataView> {
     final colorscheme = Theme.of(context).colorScheme;
 
     return DecoratedBox(
-      decoration: BoxDecoration(
-          gradient: LinearGradient(
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-        colors: [
-          colorscheme.primaryContainer.withOpacity(.5),
-          colorscheme.secondaryContainer.withOpacity(.2),
-          colorscheme.tertiaryContainer.withOpacity(.1),
-        ],
-      )),
+      decoration: BoxDecoration(),
       child: CustomScrollView(
         controller: scrollController,
         slivers: [
@@ -144,13 +135,14 @@ class _HomeDataViewState extends State<HomeDataView> {
             ],
             leading: Padding(
               padding: const EdgeInsets.only(left: 8),
-              child: SvgPicture.asset(
-                "assets/icons/icong.svg",
-                color: colorscheme.primary,
+              child: Icon(
+                Icons.music_note_outlined,
+                size: 44,
+                color: Theme.of(context).colorScheme.primary,
               ),
             ),
             title: Text(
-              "Tansen",
+              "Music",
               style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontFamily: "Foxcon",
