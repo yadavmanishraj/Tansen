@@ -7,26 +7,14 @@ part of 'search_model.dart';
 // **************************************************************************
 
 SearchModel _$SearchModelFromJson(Map<String, dynamic> json) => SearchModel(
-      id: json['id'] as String?,
-      title: json['title'] as String?,
-      type: json['type'] as String? ?? 'unknown',
-      description: json['description'] as String?,
-      music: json['music'] as String?,
-      permaUrl: json['url'] as String,
-      position: json['position'] as String?,
-      image: json['image'] as String?,
-      subtitle: json['subtitle'] as String?,
+      data: (json['data'] as List<dynamic>)
+          .map((e) => BaseModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      position: json['position'] as int,
     );
 
 Map<String, dynamic> _$SearchModelToJson(SearchModel instance) =>
     <String, dynamic>{
-      'id': instance.id,
-      'title': instance.title,
-      'subtitle': instance.subtitle,
-      'image': instance.image,
-      'type': instance.type,
-      'description': instance.description,
-      'music': instance.music,
+      'data': instance.data,
       'position': instance.position,
-      'url': instance.permaUrl,
     };

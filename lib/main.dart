@@ -7,7 +7,7 @@ import 'package:tansen/src/routes/routes.dart';
 
 void main() async {
   setUpDependencies();
-  Bloc.observer = AppBlocObserverBlocObserver();
+  // Bloc.observer = AppBlocObserverBlocObserver();
   runApp(const App());
 }
 
@@ -22,7 +22,7 @@ class App extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           brightness: Brightness.dark,
-          colorSchemeSeed: Colors.red,
+          colorSchemeSeed: Colors.pink[900],
           useMaterial3: true,
           fontFamily: "Foxcon",
         ),

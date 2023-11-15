@@ -1,9 +1,13 @@
+import 'dart:developer';
 import 'dart:ui';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:muisc_repository/muisc_repository.dart';
+import 'package:tansen/src/features/player/bloc/music_player_bloc.dart';
+import 'package:tansen/src/widgets/art_display.dart';
 import 'package:tansen/src/widgets/basics.dart';
 
 class ThemedSubTree extends StatelessWidget {
@@ -26,10 +30,28 @@ class ThemedSubTree extends StatelessWidget {
   }
 }
 
-class PlaylistDetailsPage extends StatelessWidget {
+class PlaylistDetailsPage extends StatefulWidget {
   const PlaylistDetailsPage({super.key, required this.albumDetails});
 
-  final Future<AlbumDetails> albumDetails;
+  final Future<DetailsModel?> albumDetails;
+
+  @override
+  State<PlaylistDetailsPage> createState() => _PlaylistDetailsPageState();
+}
+
+class _PlaylistDetailsPageState extends State<PlaylistDetailsPage> {
+  final ScrollController scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    scrollController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,214 +59,282 @@ class PlaylistDetailsPage extends StatelessWidget {
         systemNavigationBarColor: Colors.transparent));
     return Scaffold(
       body: FutureBuilder(
-        future: albumDetails,
+        future: widget.albumDetails,
         builder: (context, snapshot) => !snapshot.hasData
             ? const Center(
                 child: CircularProgressIndicator(),
               )
             : ThemedSubTree(
-                imageProvider: NetworkImage(snapshot.data?.image ?? ""),
+                imageProvider:
+                    NetworkImage(snapshot.data!.baseModel.image ?? ""),
                 child: Builder(builder: (context) {
                   return Scaffold(
                     backgroundColor: Theme.of(context).colorScheme.surface,
-                    body: CustomScrollView(slivers: [
-                      SliverAppBar(
-                        expandedHeight: 458,
-                        pinned: true,
-                        actions: [
-                          IconButton(
-                              onPressed: () {}, icon: const Icon(Icons.search))
-                        ],
-                        flexibleSpace: FlexibleSpaceBar(
-                            title: Text(
-                              snapshot.data?.title ?? "",
-                              textAlign: TextAlign.center,
-                              maxLines: 1,
-                              style:
-                                  const TextStyle(fontWeight: FontWeight.bold),
+                    body: CustomScrollView(
+                        controller: scrollController,
+                        slivers: [
+                          DetailsHeader(
+                              title: snapshot.data?.baseModel.title ?? "",
+                              type: snapshot.data?.baseModel.type ?? "song",
+                              imageUrl: snapshot.data?.baseModel.veryHigh ?? "",
+                              subtitle: snapshot.data?.baseModel.subText ?? "",
+                              controller: scrollController),
+                          SliverToBoxAdapter(
+                            child: Padding(
+                              padding: const EdgeInsets.only(bottom: 16),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 4.0),
+                                    child: IconButton.filledTonal(
+                                        style: IconButton.styleFrom(
+                                            padding: EdgeInsets.all(14),
+                                            backgroundColor: Theme.of(context)
+                                                .colorScheme
+                                                .inversePrimary
+                                                .withOpacity(.1)),
+                                        onPressed: () {},
+                                        icon: const Icon(
+                                            Icons.file_download_outlined)),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 4.0),
+                                    child: IconButton.filledTonal(
+                                        style: IconButton.styleFrom(
+                                            padding: EdgeInsets.all(14),
+                                            backgroundColor: Theme.of(context)
+                                                .colorScheme
+                                                .inversePrimary
+                                                .withOpacity(0.1)),
+                                        onPressed: () {},
+                                        icon: const Icon(
+                                            Icons.library_add_outlined)),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 4.0),
+                                    child: IconButton.filled(
+                                        onPressed: () {
+                                          context.read<MusicPlayerBloc>().add(
+                                              MusicPlayerAddEvent(
+                                                  baseModel: snapshot
+                                                      .data!.baseModel));
+                                        },
+                                        icon: const Icon(
+                                          Icons.play_arrow,
+                                          size: 48,
+                                        )),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 4.0),
+                                    child: IconButton.filledTonal(
+                                        style: IconButton.styleFrom(
+                                            padding: EdgeInsets.all(14),
+                                            backgroundColor: Theme.of(context)
+                                                .colorScheme
+                                                .inversePrimary
+                                                .withOpacity(.1)),
+                                        onPressed: () {},
+                                        icon: const Icon(
+                                            Icons.ios_share_outlined)),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 4.0),
+                                    child: IconButton.filledTonal(
+                                        style: IconButton.styleFrom(
+                                            padding: EdgeInsets.all(14),
+                                            backgroundColor: Theme.of(context)
+                                                .colorScheme
+                                                .inversePrimary
+                                                .withOpacity(.1)),
+                                        onPressed: () {},
+                                        icon: const Icon(Icons.more_vert)),
+                                  ),
+                                ],
+                              ),
                             ),
-                            centerTitle: true,
-                            collapseMode: CollapseMode.pin,
-                            background: Stack(
-                              fit: StackFit.expand,
-                              children: [
-                                ImageFiltered(
-                                  imageFilter:
-                                      ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-                                  child: CachedNetworkImage(
-                                    imageUrl: snapshot.data?.image ?? "",
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                                Positioned.fill(
-                                  child: DecoratedBox(
-                                      decoration: BoxDecoration(
-                                          gradient: LinearGradient(
-                                              begin: Alignment.topCenter,
-                                              end: Alignment.bottomCenter,
-                                              colors: [
-                                        // Theme.of(context)
-                                        //     .colorScheme
-                                        //     .onPrimary
-                                        //     .withOpacity(.1),
-                                        Theme.of(context)
-                                            .colorScheme
-                                            .surface
-                                            .withOpacity(.3),
-                                        // Theme.of(context).colorScheme.surface.withOpacity(.9),
-                                        // Colors.red,
-                                        // Theme.of(context).scaffoldBackgroundColor,
-                                        Theme.of(context)
-                                            .colorScheme
-                                            .surface
-                                            .withOpacity(.7),
-                                        Theme.of(context).colorScheme.surface,
-                                      ]))),
-                                ),
-                                Align(
-                                  alignment: Alignment.center,
-                                  child: Column(
-                                    children: [
-                                      const SizedBox(height: 40),
-                                      Text(
-                                          '${snapshot.data?.listCount ?? "9"} songs'),
-                                      Text(snapshot.data?.type.toUpperCase() ??
-                                          "Radio"),
-                                      const SizedBox(height: 16),
-                                      SizedBox(
-                                        height: 300,
-                                        width: 300,
-                                        child: ClipRRect(
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                          child: CachedNetworkImage(
-                                            imageUrl: snapshot.data?.image
-                                                    ?.replaceAll(
-                                                        "150x150", "500x500") ??
-                                                "",
-                                            fit: BoxFit.cover,
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(height: 8),
-                                      Padding(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 16.0),
-                                        child: SizedBox(height: 34),
-                                      ),
-                                      Text(
-                                        snapshot.data?.headerDesc ?? "",
-                                        maxLines: 1,
-                                        style: TextStyle(
-                                          color: Colors.grey,
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                )
-                              ],
-                            )),
-                      ),
-                      SliverToBoxAdapter(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 4.0),
-                                child: IconButton.filledTonal(
-                                    style: IconButton.styleFrom(
-                                        padding: EdgeInsets.all(14),
-                                        backgroundColor: Theme.of(context)
-                                            .colorScheme
-                                            .inversePrimary
-                                            .withOpacity(.1)),
-                                    onPressed: () {},
-                                    icon: const Icon(
-                                        Icons.file_download_outlined)),
-                              ),
-                              Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 4.0),
-                                child: IconButton.filledTonal(
-                                    style: IconButton.styleFrom(
-                                        padding: EdgeInsets.all(14),
-                                        backgroundColor: Theme.of(context)
-                                            .colorScheme
-                                            .inversePrimary
-                                            .withOpacity(0.1)),
-                                    onPressed: () {},
-                                    icon:
-                                        const Icon(Icons.library_add_outlined)),
-                              ),
-                              Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 4.0),
-                                child: IconButton.filled(
-                                    onPressed: () {},
-                                    icon: const Icon(
-                                      Icons.play_arrow,
-                                      size: 48,
-                                    )),
-                              ),
-                              Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 4.0),
-                                child: IconButton.filledTonal(
-                                    style: IconButton.styleFrom(
-                                        padding: EdgeInsets.all(14),
-                                        backgroundColor: Theme.of(context)
-                                            .colorScheme
-                                            .inversePrimary
-                                            .withOpacity(.1)),
-                                    onPressed: () {},
-                                    icon: const Icon(Icons.ios_share_outlined)),
-                              ),
-                              Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 4.0),
-                                child: IconButton.filledTonal(
-                                    style: IconButton.styleFrom(
-                                        padding: EdgeInsets.all(14),
-                                        backgroundColor: Theme.of(context)
-                                            .colorScheme
-                                            .inversePrimary
-                                            .withOpacity(.1)),
-                                    onPressed: () {},
-                                    icon: const Icon(Icons.more_vert)),
-                              ),
-                            ],
                           ),
-                        ),
-                      ),
-                      SliverList.builder(
-                        itemCount: snapshot.data?.songs?.length ?? 0,
-                        itemBuilder: (context, index) => ListTile(
-                          leading: AspectRatio(
-                            aspectRatio: 1,
-                            child: RoundedBox(
-                                child: CachedNetworkImage(
-                              imageUrl: snapshot.data?.songs
-                                      ?.elementAt(index)
-                                      .image ??
-                                  "",
-                            )),
+                          SliverList.builder(
+                            itemCount: snapshot.data?.mainDetails?.length ?? 0,
+                            itemBuilder: (context, index) => ListTile(
+                              onTap: () {
+                                context.read<MusicPlayerBloc>().add(
+                                    MusicPlayerAddEvent(
+                                        index: index,
+                                        baseModel: snapshot.data!.baseModel));
+                              },
+                              leading: AspectRatio(
+                                aspectRatio: 1,
+                                child: RoundedBox(
+                                    child: CachedNetworkImage(
+                                  imageUrl: snapshot
+                                          .data?.mainDetails?[index].veryHigh ??
+                                      "",
+                                )),
+                              ),
+                              title: Text(
+                                snapshot.data?.mainDetails?[index].title ??
+                                    'no title',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              subtitle: Text(
+                                  snapshot.data?.mainDetails?[index].subText ??
+                                      'no title',
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 1),
+                              trailing: IconButton(
+                                icon: const Icon(Icons.more_vert),
+                                onPressed: () {},
+                              ),
+                            ),
                           ),
-                          title: Text(
-                              snapshot.data?.songs?.elementAt(index).title ??
-                                  'no title'),
-                          subtitle: Text(
-                              snapshot.data?.songs?.elementAt(index).subText ??
-                                  'no title'),
-                        ),
-                      )
-                    ]),
+                          SliverToBoxAdapter(
+                            child: snapshot.data?.detailsMore?.entries.first
+                                        .value !=
+                                    null
+                                ? ArtContainer(
+                                    models: snapshot
+                                        .data!.detailsMore!.entries.first.value,
+                                    title: "Artists")
+                                : const SizedBox.shrink(),
+                          )
+                        ]),
                   );
                 }),
               ),
       ),
+    );
+  }
+}
+
+class DetailsHeader extends StatefulWidget {
+  const DetailsHeader({
+    super.key,
+    required this.title,
+    required this.type,
+    required this.imageUrl,
+    required this.subtitle,
+    required this.controller,
+  });
+  final String title;
+  final String type;
+  final String imageUrl;
+  final String subtitle;
+  final ScrollController controller;
+
+  @override
+  State<DetailsHeader> createState() => _DetailsHeaderState();
+}
+
+class _DetailsHeaderState extends State<DetailsHeader> {
+  @override
+  void initState() {
+    super.initState();
+    widget.controller.addListener(() {
+      setState(() {});
+    });
+  }
+
+  @override
+  void dispose() {
+    widget.controller.removeListener(() {});
+    super.dispose();
+  }
+
+  EdgeInsetsGeometry getPadding() {
+    if (widget.controller.hasClients &&
+        widget.controller.offset >= 458 - kToolbarHeight) {
+      return const EdgeInsetsDirectional.only(start: 0, bottom: 16);
+    } else {
+      return const EdgeInsets.only(bottom: 48);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverAppBar(
+      expandedHeight: 458,
+      pinned: true,
+      actions: [IconButton(onPressed: () {}, icon: const Icon(Icons.search))],
+      flexibleSpace: FlexibleSpaceBar(
+          titlePadding: getPadding(),
+          title: Text(
+            widget.title,
+            textAlign: TextAlign.center,
+            maxLines: 1,
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+          ),
+          centerTitle: true,
+          collapseMode: CollapseMode.pin,
+          background: Stack(
+            fit: StackFit.expand,
+            children: [
+              ImageFiltered(
+                imageFilter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+                child: CachedNetworkImage(
+                  imageUrl: widget.imageUrl,
+                  fit: BoxFit.cover,
+                ),
+              ),
+              Positioned.fill(
+                child: DecoratedBox(
+                    decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                      // Theme.of(context)
+                      //     .colorScheme
+                      //     .onPrimary
+                      //     .withOpacity(.1),
+                      Theme.of(context).colorScheme.surface.withOpacity(.3),
+                      // Theme.of(context).colorScheme.surface.withOpacity(.9),
+                      // Colors.red,
+                      // Theme.of(context).scaffoldBackgroundColor,
+                      Theme.of(context).colorScheme.surface.withOpacity(.7),
+                      Theme.of(context).colorScheme.surface,
+                    ]))),
+              ),
+              Align(
+                alignment: Alignment.center,
+                child: Column(
+                  children: [
+                    const SizedBox(height: 40),
+                    Text('songs'),
+                    Text(widget.type.toUpperCase()),
+                    const SizedBox(height: 16),
+                    SizedBox(
+                      height: 300,
+                      width: 300,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: CachedNetworkImage(
+                          imageUrl: widget.imageUrl,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 16.0),
+                      child: SizedBox(height: 45),
+                    ),
+                    Text(
+                      widget.subtitle,
+                      maxLines: 1,
+                      style: TextStyle(color: Colors.grey, fontSize: 16),
+                    )
+                  ],
+                ),
+              )
+            ],
+          )),
     );
   }
 }

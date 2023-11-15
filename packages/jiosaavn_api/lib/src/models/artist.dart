@@ -17,12 +17,19 @@ class Artist extends BaseModel {
   final String? role;
 
   String get name => title;
+  String get subtitle {
+    var char = role!.toLowerCase().codeUnitAt(0) - 32;
+    var list = role!.codeUnits.sublist(0, role!.length);
+    list.replaceRange(0, 1, [char]);
+    return String.fromCharCodes(list);
+  }
 
   Artist({
     required super.id,
     required this.title,
     required super.type,
     required super.permaUrl,
+    super.image,
     super.subtitle,
     this.role,
   }) : super(title: title);

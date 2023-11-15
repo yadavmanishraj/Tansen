@@ -1,9 +1,18 @@
+import 'dart:async';
+import 'dart:developer';
+import 'dart:io';
+import 'dart:ui';
+
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get_it/get_it.dart';
+import 'package:go_router/go_router.dart';
 import 'package:muisc_repository/muisc_repository.dart';
 import 'package:tansen/src/features/player/view/play_pause_button.dart';
+import 'package:tansen/src/features/search/view/search_view.dart';
 import 'package:tansen/src/widgets/art_display.dart';
 
 import '../home.dart';
@@ -68,15 +77,16 @@ class HomeView extends StatelessWidget {
           final data = state.data?.entries;
           return Scaffold(
             body: HomeDataView(data: data),
-            backgroundColor: colorScheme.brightness == Brightness.light
-                ? Colors.white.withOpacity(.7)
-                : Colors.black.withOpacity(.7),
           );
         }
       },
     );
   }
 }
+
+final categories = [
+  {"label": "Energize", "icon": const Icon(Icons.energy_savings_leaf)}
+];
 
 class HomeDataView extends StatefulWidget {
   const HomeDataView({
@@ -119,64 +129,24 @@ class _HomeDataViewState extends State<HomeDataView> {
   Widget build(BuildContext context) {
     final colorscheme = Theme.of(context).colorScheme;
 
-    return DecoratedBox(
-      decoration: BoxDecoration(),
+    return GradientMesh(
+      scrollController: scrollController,
+      // decoration: BoxDecoration(
+      //     gradient: LinearGradient(
+      //   begin: Alignment.topCenter,
+      //   end: Alignment.bottomCenter,
+      //   colors: [
+      //     colorscheme.primaryContainer.withOpacity(.5),
+      //     colorscheme.surface,
+      //     colorscheme.surface,
+      //   ],
+      // )),
+      image: "https://th.bing.com/th/id/OIG.VvzmEZi8MC6PpRYQrdml?pid=ImgGn",
       child: CustomScrollView(
         controller: scrollController,
         slivers: [
-          SliverAppBar(
-            backgroundColor: Colors.transparent,
-            titleSpacing: 0,
-            titleTextStyle:
-                const TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-            actions: [
-              IconButton(onPressed: () {}, icon: const Icon(Icons.search)),
-              const PlayPauseButton()
-            ],
-            leading: Padding(
-              padding: const EdgeInsets.only(left: 8),
-              child: Icon(
-                Icons.music_note_outlined,
-                size: 44,
-                color: Theme.of(context).colorScheme.primary,
-              ),
-            ),
-            title: Text(
-              "Music",
-              style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontFamily: "Foxcon",
-                  letterSpacing: -1,
-                  color: colorscheme.primary),
-            ),
-          ),
-          const SliverToBoxAdapter(
-            child: Padding(
-              padding: EdgeInsets.symmetric(vertical: 8.0),
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.only(left: 16.0),
-                      child: ThemedIcon(
-                          avatar: Icons.music_note_outlined, label: "Music"),
-                    ),
-                    ThemedIcon(
-                      avatar: Icons.podcasts,
-                      label: "Podcasts",
-                      selected: true,
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(right: 16.0),
-                      child:
-                          ThemedIcon(avatar: Icons.bolt, label: "Audiobooks"),
-                    )
-                  ],
-                ),
-              ),
-            ),
-          ),
+          HomeAppbar(colorscheme: colorscheme),
+          const CategoryBar(),
           SliverList.builder(
             itemCount: widget.data?.length ?? 0,
             itemBuilder: (context, index) => Padding(
@@ -188,6 +158,58 @@ class _HomeDataViewState extends State<HomeDataView> {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class HomeAppbar extends StatefulWidget {
+  const HomeAppbar({
+    super.key,
+    required this.colorscheme,
+  });
+
+  final ColorScheme colorscheme;
+
+  @override
+  State<HomeAppbar> createState() => _HomeAppbarState();
+}
+
+class _HomeAppbarState extends State<HomeAppbar> {
+  bool pinned = false;
+  bool floating = true;
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverAppBar(
+      backgroundColor: Colors.transparent,
+      titleSpacing: 0,
+      titleTextStyle:
+          const TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+      actions: [
+        IconButton(
+            onPressed: () {
+              context.push(SearchPage.route);
+            },
+            icon: const Icon(Icons.search)),
+        const PlayPauseButton()
+      ],
+      leading: Padding(
+        padding: const EdgeInsets.only(left: 8),
+        child: Icon(
+          Icons.music_note_outlined,
+          size: 44,
+          color: Theme.of(context).colorScheme.surface,
+        ),
+      ),
+      title: Text(
+        "Music",
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          fontFamily: "Foxcon",
+          letterSpacing: -1,
+          color: Theme.of(context).colorScheme.surface,
+        ),
       ),
     );
   }
@@ -210,28 +232,300 @@ class ThemedIcon extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 4.0),
-      child: FilterChip.elevated(
-          elevation: 0,
-          avatar: Icon(
-            avatar,
-            color: selected
-                ? Theme.of(context).colorScheme.inversePrimary
-                : Theme.of(context).colorScheme.onSurface,
-          ),
-          label: Text(
-            label,
-            style: TextStyle(
-              fontWeight: FontWeight.w400,
-              color: selected
-                  ? Theme.of(context).colorScheme.inversePrimary
-                  : Theme.of(context).colorScheme.onSurface,
+      child: AppChip(
+        icon: Icon(
+          avatar,
+          color: selected ? colorScheme.surface : colorScheme.inverseSurface,
+        ),
+        label: label,
+        selected: selected,
+      ),
+    );
+  }
+}
+
+class GradientMesh extends StatelessWidget {
+  const GradientMesh(
+      {super.key,
+      required this.image,
+      required this.child,
+      required this.scrollController});
+
+  final String image;
+  final Widget child;
+  final ScrollController scrollController;
+
+  @override
+  Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(
+        const SystemUiOverlayStyle(statusBarColor: Colors.transparent));
+    return Stack(
+      children: [
+        PositionedImageBuilder(
+          image: image,
+          scrollController: scrollController,
+        ),
+        PositionedGradient(
+          scrollController: scrollController,
+        ),
+        SafeArea(
+          child: child,
+        )
+      ],
+    );
+  }
+}
+
+class PositionedGradient extends StatefulWidget {
+  const PositionedGradient({super.key, required this.scrollController});
+  final ScrollController scrollController;
+
+  @override
+  State<PositionedGradient> createState() => _PositionedGradientState();
+}
+
+class _PositionedGradientState extends State<PositionedGradient> {
+  final StreamController<double> streamController =
+      StreamController.broadcast();
+
+  @override
+  void initState() {
+    super.initState();
+    widget.scrollController.addListener(() {
+      updatePosition();
+    });
+  }
+
+  void updatePosition() {
+    if (widget.scrollController.hasClients) {
+      streamController.add(widget.scrollController.offset);
+    }
+  }
+
+  double calculateOpacity(double value) {
+    final result = value / 60;
+    if (result > .9) result.round();
+    log(result.toString(), name: "Opacity");
+    return result;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<double>(
+        stream: streamController.stream.where((event) => event <= 60),
+        initialData: 0,
+        builder: (context, snapshot) {
+          return Container(
+            height: 400,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Theme.of(context)
+                      .colorScheme
+                      .surface
+                      .withOpacity(calculateOpacity(snapshot.data!)),
+                  Theme.of(context).colorScheme.surface,
+                ],
+              ),
             ),
-          ),
-          selected: selected,
-          selectedColor: Theme.of(context).colorScheme.primary,
-          backgroundColor: colorScheme.primary.withOpacity(.2),
-          showCheckmark: false,
-          onSelected: (v) {}),
+          );
+        });
+  }
+}
+
+class PositionedImageBuilder extends StatefulWidget {
+  const PositionedImageBuilder(
+      {super.key, required this.image, required this.scrollController});
+  final String image;
+  final ScrollController scrollController;
+
+  @override
+  State<PositionedImageBuilder> createState() => _PositionedImageBuilderState();
+}
+
+class _PositionedImageBuilderState extends State<PositionedImageBuilder> {
+  @override
+  void initState() {
+    super.initState();
+    widget.scrollController.addListener(() {
+      updatePosition();
+    });
+  }
+
+  void updatePosition() {
+    if (widget.scrollController.hasClients) {
+      log(widget.scrollController.offset.toString());
+      setState(() {});
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Positioned(
+      left: 0,
+      right: 0,
+      top: 0,
+      height: 400,
+      child: CachedNetworkImage(
+        imageUrl: widget.image,
+        fit: BoxFit.cover,
+      ),
+    );
+  }
+}
+
+class AppChip extends StatelessWidget {
+  const AppChip(
+      {super.key,
+      required this.icon,
+      required this.label,
+      this.selected = false});
+  final Icon icon;
+  final String label;
+  final bool selected;
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      color: selected
+          ? Colors.white
+          : Theme.of(context).colorScheme.primary.withOpacity(.4),
+      borderOnForeground: true,
+      surfaceTintColor: Colors.transparent,
+      child: InkWell(
+        onTap: () {},
+        borderRadius: BorderRadius.circular(8),
+        child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+            child: Row(
+              children: [
+                icon,
+                const SizedBox(width: 8),
+                Text(
+                  label,
+                  style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 16,
+                      color: selected ? Colors.black : Colors.white),
+                ),
+              ],
+            )),
+      ),
+    );
+  }
+}
+
+class CategoryBar extends StatefulWidget {
+  const CategoryBar({
+    super.key,
+  });
+
+  @override
+  State<CategoryBar> createState() => _CategoryBarState();
+}
+
+class _CategoryBarState extends State<CategoryBar> {
+  StreamController<double> streamController = StreamController.broadcast();
+
+  @override
+  initState() {
+    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    (Scrollable.of(context).position.addListener(() {
+      var offset = Scrollable.of(context).position.pixels;
+      streamController.add(offset);
+    }));
+  }
+
+  double calculateOpacity(double value) {
+    try {
+      var result = value / 500;
+      if (result > .5 || result.isNaN || value > 50) return 1;
+      return 0;
+    } catch (e) {
+      return 1;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverAppBar(
+      backgroundColor: Colors.transparent,
+      foregroundColor: Colors.transparent,
+      surfaceTintColor: Colors.transparent,
+      floating: true,
+      toolbarHeight: 80,
+      pinned: true,
+      titleSpacing: 0,
+      title: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: StreamBuilder<double>(
+            stream: streamController.stream.where((event) => event <= 60),
+            initialData: 0,
+            builder: (context, snapshot) {
+              return ColoredBox(
+                color: Theme.of(context)
+                    .colorScheme
+                    .background
+                    .withOpacity(calculateOpacity(snapshot.data!)),
+                child: const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 18),
+                  child: Row(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(left: 16.0),
+                        child: ThemedIcon(
+                          avatar: Icons.bolt,
+                          label: "Energize",
+                          selected: true,
+                        ),
+                      ),
+                      ThemedIcon(
+                        avatar: Icons.auto_awesome,
+                        label: "Feel Good",
+                      ),
+                      ThemedIcon(
+                        avatar: Icons.nightlight_sharp,
+                        label: "Sleep",
+                      ),
+                      ThemedIcon(
+                        avatar: Icons.center_focus_weak,
+                        label: "Focus",
+                      ),
+                      ThemedIcon(
+                        avatar: Icons.commute_sharp,
+                        label: "Commute",
+                      ),
+                      ThemedIcon(
+                        avatar: Icons.airline_seat_recline_extra,
+                        label: "Relax",
+                      ),
+                      ThemedIcon(
+                        avatar: Icons.auto_awesome_motion,
+                        label: "Party",
+                      ),
+                      ThemedIcon(
+                        avatar: Icons.pie_chart_outline_rounded,
+                        label: "Romance",
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(right: 16.0),
+                        child: ThemedIcon(
+                            avatar: Icons.workspaces_outlined,
+                            label: "Workout"),
+                      )
+                    ],
+                  ),
+                ),
+              );
+            }),
+      ),
     );
   }
 }

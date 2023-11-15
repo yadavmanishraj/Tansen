@@ -50,6 +50,7 @@ dependencies:
   audio_service: ^0.18.12
   rxdart: ^0.27.7
   html_unescape: ^2.0.0
+  vector_math: ^2.1.4
 
 dev_dependencies:
   flutter_test:

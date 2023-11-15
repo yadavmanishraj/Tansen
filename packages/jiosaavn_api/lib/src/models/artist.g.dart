@@ -11,15 +11,17 @@ Artist _$ArtistFromJson(Map<String, dynamic> json) => Artist(
       title: json['name'] as String,
       type: json['type'] as String? ?? 'unknown',
       permaUrl: json['perma_url'] as String,
+      image: json['image'] as String?,
       subtitle: json['subtitle'] as String?,
       role: json['role'] as String?,
     );
 
 Map<String, dynamic> _$ArtistToJson(Artist instance) => <String, dynamic>{
       'id': instance.id,
-      'subtitle': instance.subtitle,
+      'image': instance.image,
       'type': instance.type,
       'perma_url': instance.permaUrl,
       'name': instance.title,
       'role': instance.role,
+      'subtitle': instance.subtitle,
     };

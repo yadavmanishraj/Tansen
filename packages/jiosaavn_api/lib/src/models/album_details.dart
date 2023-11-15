@@ -1,3 +1,4 @@
+import 'package:jiosaavn_api/jiosaavn_api.dart';
 import 'package:jiosaavn_api/src/models/base_model_details.dart';
 import 'package:jiosaavn_api/src/models/song_details.dart';
 import 'package:json_annotation/json_annotation.dart';
@@ -42,11 +43,14 @@ class AlbumDetailsExtra extends BaseModelDetailsExtra {
     super.copyrightText,
     super.labelUrl,
     super.songCount,
+    this.artists,
   });
 
+  final List<BaseModel>? artists;
+
   factory AlbumDetailsExtra.fromJson(Map<String, dynamic> json) =>
-      _$AlbumExtraFromJson(json);
+      _$AlbumDetailsExtraFromJson(json);
 
   @override
-  Map<String, dynamic> toJson() => _$AlbumExtraToJson(this);
+  Map<String, dynamic> toJson() => _$AlbumDetailsExtraToJson(this);
 }

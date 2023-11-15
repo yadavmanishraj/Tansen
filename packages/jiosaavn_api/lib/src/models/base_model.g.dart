@@ -10,7 +10,7 @@ BaseModel _$BaseModelFromJson(Map<String, dynamic> json) => BaseModel(
       id: json['id'] as String?,
       title: json['title'] as String?,
       type: json['type'] as String? ?? 'unknown',
-      permaUrl: json['perma_url'] as String,
+      permaUrl: json['perma_url'] as String? ?? "Manish",
       subtitle: json['subtitle'] as String?,
       image: json['image'] as String?,
       explicitContent: json['explicit_content'] as String?,

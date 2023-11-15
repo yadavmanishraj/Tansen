@@ -20,7 +20,7 @@ class MusicPlayerStateChangedEvent extends MusicPlayerEvent {
 }
 
 class MusicPlayerChangeIndexEvent extends MusicPlayerEvent {
-   final int index;
+  final int index;
   const MusicPlayerChangeIndexEvent({
     required this.index,
   });
@@ -48,9 +48,20 @@ class MusicPlayerChangePositionEvent extends MusicPlayerEvent {
 
 class MusicPlayerAddEvent extends MusicPlayerEvent {
   final BaseModel baseModel;
+  final int index;
   const MusicPlayerAddEvent({
     required this.baseModel,
+    this.index = 0,
   });
+
   @override
-  List<Object> get props => [baseModel];
+  List<Object> get props => [baseModel, index];
+}
+
+class SeekProgressEvent extends MusicPlayerEvent {
+  final double progress;
+  const SeekProgressEvent(this.progress);
+
+  @override
+  List<Object> get props => [progress];
 }

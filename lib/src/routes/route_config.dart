@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:muisc_repository/muisc_repository.dart';
 import 'package:tansen/src/features/home/home.dart';
+import 'package:tansen/src/features/search/view/search_view.dart';
 import 'package:tansen/src/routes/view/scaffold_with_navigator.dart';
 import 'package:tansen/src/widgets/details_page.dart';
 import 'package:animations/animations.dart';
@@ -36,31 +37,22 @@ final routes = GoRouter(
         StatefulShellBranch(routes: [
           GoRoute(
             path: '/library',
-            builder: (context, state) => Text("Library Page"),
+            builder: (context, state) => const Text("Library Page"),
           ),
         ])
       ],
     ),
     GoRoute(
-      parentNavigatorKey: _rootNavigatorKey,
-      path: "/details",
-      pageBuilder: (context, state) => CustomTransitionPage(
-        child: PlaylistDetailsPage(
-            albumDetails: state.extra as Future<AlbumDetails>),
-        transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          final tween =
-              Tween(begin: const Offset(1, 1), end: const Offset(0, 0.0))
-                  .chain(CurveTween(curve: Curves.easeInSine))
-                  .animate(animation);
-          return CupertinoPageTransition(
-            primaryRouteAnimation: animation,
-            secondaryRouteAnimation: secondaryAnimation,
-            linearTransition: true,
-            child: child,
-          );
-        },
-      ),
+      path: SearchPage.route,
+      // parentNavigatorKey: _rootNavigatorKey,
+      pageBuilder: (context, state) => const CupertinoPage(child: SearchPage()),
     ),
+    GoRoute(
+        // parentNavigatorKey: _rootNavigatorKey,
+        path: "/details",
+        pageBuilder: (context, state) => CupertinoPage(
+            child: PlaylistDetailsPage(
+                albumDetails: state.extra as Future<DetailsModel?>))),
   ],
   debugLogDiagnostics: true,
 );

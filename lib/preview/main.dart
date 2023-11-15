@@ -4,9 +4,26 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:tansen/src/widgets/basics.dart';
+import 'animated.dart';
 
-void main(List<String> args) {
-  runApp(const PreviewApp());
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(
+          fontFamily: "Inter", useMaterial3: true, brightness: Brightness.dark),
+      home: Scaffold(
+        appBar: AppBar(
+          title: Text('Animated Gradient Mesh'),
+        ),
+        body: AnimatedGradientMesh(),
+      ),
+    );
+  }
 }
 
 final images = [

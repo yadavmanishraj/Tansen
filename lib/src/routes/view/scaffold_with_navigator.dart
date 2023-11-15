@@ -59,14 +59,11 @@ class _ScaffoldWithNavigatorState extends State<ScaffoldWithNavigator> {
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 100, sigmaY: 100),
           child: ColoredBox(
-            color: colorScheme.primaryContainer.withOpacity(.3),
+            color: colorScheme.surface.withOpacity(.1),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Container(
-                  height: 60,
-                  child: MiniPlayerWidget(),
-                ),
+                const MiniPlayerWidget(),
                 PlayerProgressView(),
                 SizedBox(height: 16),
                 NavigationBar(

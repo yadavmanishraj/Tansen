@@ -48,18 +48,22 @@ Map<String, dynamic> _$AlbumDetailsToJson(AlbumDetails instance) =>
       'list': instance.songs,
     };
 
-AlbumDetailsExtra _$AlbumExtraFromJson(Map<String, dynamic> json) =>
+AlbumDetailsExtra _$AlbumDetailsExtraFromJson(Map<String, dynamic> json) =>
     AlbumDetailsExtra(
       isDolbyContent: json['is_dolby_content'] as bool? ?? false,
       copyrightText: json['copyright_text'] as String?,
       labelUrl: json['label_url'] as String?,
       songCount: json['song_count'] as String?,
+      artists: (json['artists'] as List<dynamic>?)
+          ?.map((e) => BaseModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
 
-Map<String, dynamic> _$AlbumExtraToJson(AlbumDetailsExtra instance) =>
+Map<String, dynamic> _$AlbumDetailsExtraToJson(AlbumDetailsExtra instance) =>
     <String, dynamic>{
       'copyright_text': instance.copyrightText,
       'is_dolby_content': instance.isDolbyContent,
       'label_url': instance.labelUrl,
       'song_count': instance.songCount,
+      'artists': instance.artists,
     };

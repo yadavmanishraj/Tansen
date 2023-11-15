@@ -18,11 +18,11 @@ class MiniPlayerWidget extends StatefulWidget {
 
 class _MiniPlayerWidgetState extends State<MiniPlayerWidget> {
   late final PageController pageController;
+  var system = true;
 
   @override
   void initState() {
     super.initState();
-    pageController = PageController();
     // isPlaying = context.read<MusicPlayerBloc>().state.state.playing;
   }
 
@@ -33,26 +33,50 @@ class _MiniPlayerWidgetState extends State<MiniPlayerWidget> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    pageController = PageController(
+        initialPage: context.read<MusicPlayerBloc>().state.index);
+  }
+
+  @override
+  void dispose() {
+    pageController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Row(
-        children: [
-          Expanded(
-              child: BlocConsumer<MusicPlayerBloc, MusicPlayerState>(
-            listener: (context, state) {
-              pageController.animateToPage(state.index,
-                  duration: const Duration(milliseconds: 200),
-                  curve: Curves.bounceIn);
-            },
-            listenWhen: (previous, current) => previous.index != current.index,
-            builder: (context, state) {
-              return PageView.builder(
+    return BlocConsumer<MusicPlayerBloc, MusicPlayerState>(
+      listener: (context, state) {
+        // log(pageController.page.toString());
+        if (system && pageController.hasClients) {
+          system = true;
+          pageController.jumpToPage(state.index);
+        }
+        system = true;
+      },
+      listenWhen: (previous, current) =>
+          previous.nowPlaying != current.nowPlaying,
+      builder: (context, state) {
+        if (state.nowPlaying == null) {
+          return const SizedBox.shrink();
+        }
+        return Container(
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          height: 60,
+          child: Row(
+            children: [
+              Expanded(
+                  child: PageView.builder(
                 controller: pageController,
                 onPageChanged: (value) {
-                  context
-                      .read<MusicPlayerBloc>()
-                      .add(MusicPlayerStateSeekIndex(index: value));
+                  if (value != state.index) {
+                    system = false;
+                    context
+                        .read<MusicPlayerBloc>()
+                        .add(MusicPlayerStateSeekIndex(index: value));
+                  }
                 },
                 itemCount: state.qeue.length,
                 itemBuilder: (context, index) => InkWell(
@@ -60,6 +84,8 @@ class _MiniPlayerWidgetState extends State<MiniPlayerWidget> {
                     showModalBottomSheet(
                       isScrollControlled: true,
                       useRootNavigator: true,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(0)),
                       context: context,
                       builder: (context) => MaxPlayer(),
                     );
@@ -96,12 +122,12 @@ class _MiniPlayerWidgetState extends State<MiniPlayerWidget> {
                     ),
                   ),
                 ),
-              );
-            },
-          )),
-          const PlayPauseButton()
-        ],
-      ),
+              )),
+              const PlayPauseButton()
+            ],
+          ),
+        );
+      },
     );
   }
 }

@@ -2,7 +2,9 @@ import 'package:jiosaavn_api/jiosaavn_api.dart';
 
 extension SubTitle on BaseModel {
   String get subText {
-    if (((subtitle?.trim().isEmpty) ?? true) && type == ModelType.album) {
+    if (((subtitle?.trim().isEmpty) ?? true) &&
+        type == ModelType.album &&
+        runtimeType == Album) {
       return buildAlbumSubtitle(this as Album);
     }
     return subtitle ?? "";

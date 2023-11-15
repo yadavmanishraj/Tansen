@@ -6,3 +6,6 @@ export 'song.dart';
 export 'song_details.dart';
 export 'album.dart';
 export 'album_details.dart';
+export 'playlist.dart';
+export 'search_model_item.dart';
+export 'search_model.dart';

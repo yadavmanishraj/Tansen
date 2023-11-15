@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
@@ -66,7 +68,8 @@ class _ArtDisplayState extends State<ArtDisplay>
   }
 
   double calculateRadius() {
-    if (widget.baseModel.type == "radio_station") {
+    if (widget.baseModel.type == "radio_station" ||
+        widget.baseModel.type == "artist") {
       return 100;
     }
     return 4;
@@ -107,13 +110,14 @@ class ArtContainer extends StatelessWidget {
                 crossAxisSpacing: 16),
             itemBuilder: (context, index) => InkWell(
               onTap: () {
-                context.read<MusicPlayerBloc>().add(
-                    MusicPlayerAddEvent(baseModel: models.elementAt(index)));
-                // context.push("/details",
-                //     extra: GetIt.instance
-                //         .get<MusicRepository>()
-                //         .getAlbumDetails(
-                //             models.elementAt(index).permaUrl, "album"));
+                // context.read<MusicPlayerBloc>().add(
+                //     MusicPlayerAddEvent(baseModel: models.elementAt(index)));
+                context.push("/details",
+                    extra: GetIt.instance.get<MusicRepository>().getDetails(
+                          models.elementAt(index).type,
+                          models.elementAt(index).id!,
+                          models.elementAt(index).permaUrl,
+                        ));
               },
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
