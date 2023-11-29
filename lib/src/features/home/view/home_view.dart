@@ -141,7 +141,8 @@ class _HomeDataViewState extends State<HomeDataView> {
       //     colorscheme.surface,
       //   ],
       // )),
-      image: "https://th.bing.com/th/id/OIG.VvzmEZi8MC6PpRYQrdml?pid=ImgGn",
+      image:
+          "https://images.unsplash.com/photo-1579546929518-9e396f3cc809?q=80&w=1770&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       child: CustomScrollView(
         controller: scrollController,
         slivers: [
@@ -387,11 +388,13 @@ class AppChip extends StatelessWidget {
   final bool selected;
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Material(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       color: selected
           ? Colors.white
-          : Theme.of(context).colorScheme.primary.withOpacity(.4),
+          : Theme.of(context).colorScheme.inversePrimary.withOpacity(.4),
       borderOnForeground: true,
       surfaceTintColor: Colors.transparent,
       child: InkWell(
@@ -401,14 +404,15 @@ class AppChip extends StatelessWidget {
             padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
             child: Row(
               children: [
-                icon,
+                Icon(icon.icon,
+                    color: selected ? Colors.black : colorScheme.onSurface),
                 const SizedBox(width: 8),
                 Text(
                   label,
                   style: TextStyle(
                       fontWeight: FontWeight.w600,
                       fontSize: 16,
-                      color: selected ? Colors.black : Colors.white),
+                      color: selected ? Colors.black : colorScheme.onSurface),
                 ),
               ],
             )),
