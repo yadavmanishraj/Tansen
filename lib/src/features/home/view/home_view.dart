@@ -304,16 +304,14 @@ class _PositionedGradientState extends State<PositionedGradient> {
   }
 
   double calculateOpacity(double value) {
-    final result = value / 60;
-    if (result > .9) result.round();
-    log(result.toString(), name: "Opacity");
-    return result;
+    if (value > 60) return 1;
+    return value / 60;
   }
 
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<double>(
-        stream: streamController.stream.where((event) => event <= 60),
+        stream: streamController.stream,
         initialData: 0,
         builder: (context, snapshot) {
           return Container(
@@ -443,7 +441,9 @@ class _CategoryBarState extends State<CategoryBar> {
     super.didChangeDependencies();
     (Scrollable.of(context).position.addListener(() {
       var offset = Scrollable.of(context).position.pixels;
-      streamController.add(offset);
+      if (offset <= 60) {
+        streamController.add(offset);
+      }
     }));
   }
 
@@ -470,7 +470,7 @@ class _CategoryBarState extends State<CategoryBar> {
       title: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: StreamBuilder<double>(
-            stream: streamController.stream.where((event) => event <= 60),
+            stream: streamController.stream,
             initialData: 0,
             builder: (context, snapshot) {
               return ColoredBox(
