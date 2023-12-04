@@ -58,6 +58,19 @@ class MusicPlayerAddEvent extends MusicPlayerEvent {
   List<Object> get props => [baseModel, index];
 }
 
+
+class MusicPlayerAddEventOffline extends MusicPlayerEvent {
+  final List<BaseModel> baseModel;
+  final int index;
+  const MusicPlayerAddEventOffline({
+    required this.baseModel,
+    this.index = 0,
+  });
+
+  @override
+  List<Object> get props => [baseModel, index];
+}
+
 class SeekProgressEvent extends MusicPlayerEvent {
   final double progress;
   const SeekProgressEvent(this.progress);

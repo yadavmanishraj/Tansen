@@ -30,11 +30,11 @@ class DownloadModel {
     );
   }
 
-  BaseModel toBaseModel() => BaseModel(
+  BaseModel toBaseModel(String songPath) => BaseModel(
       id: modelId,
       title: title,
       type: "song",
-      permaUrl: imageUrl!,
+      permaUrl: songPath,
       image: imageUrl,
       subtitle: subtitle);
 }

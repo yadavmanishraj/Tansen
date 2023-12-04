@@ -8,6 +8,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:muisc_repository/muisc_repository.dart';
 import 'package:tansen/download/download_bloc.dart';
 import 'package:tansen/download/download_progress.dart';
+import 'package:tansen/download/song_downloader.dart';
 import 'package:tansen/src/features/player/bloc/music_player_bloc.dart';
 import 'package:tansen/src/widgets/art_display.dart';
 import 'package:tansen/src/widgets/basics.dart';
@@ -97,7 +98,10 @@ class _PlaylistDetailsPageState extends State<PlaylistDetailsPage> {
                                                 .colorScheme
                                                 .inversePrimary
                                                 .withOpacity(.1)),
-                                        onPressed: () {},
+                                        onPressed: () {
+                                          downloadAll(context,
+                                              snapshot.data!.mainDetails!);
+                                        },
                                         icon: const Icon(
                                             Icons.file_download_outlined)),
                                   ),
@@ -217,8 +221,10 @@ class _PlaylistDetailsPageState extends State<PlaylistDetailsPage> {
                                               ?.mainDetails?[index].veryHigh ??
                                           "",
                                     ),
-                                    DownloadProgressIndicator(modelId: snapshot
-                                              .data!.mainDetails![index].id!)
+                                    DownloadTaskIndicator(
+                                      modelId: snapshot
+                                          .data!.mainDetails![index].id!,
+                                    )
                                     // StreamBuilder(
                                     //   initialData: 0.0,
                                     //   stream: context
@@ -243,11 +249,11 @@ class _PlaylistDetailsPageState extends State<PlaylistDetailsPage> {
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                               ),
-                              subtitle: Text(
-                                  snapshot.data?.mainDetails?[index].subText ??
-                                      'no title',
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 1),
+                              subtitle: SubTitleAndStatus(
+                                modelId: snapshot.data!.mainDetails![index].id!,
+                                text:
+                                    snapshot.data!.mainDetails![index].subText,
+                              ),
                               trailing: IconButton(
                                 icon: const Icon(Icons.more_vert),
                                 onPressed: () {},
@@ -270,6 +276,13 @@ class _PlaylistDetailsPageState extends State<PlaylistDetailsPage> {
               ),
       ),
     );
+  }
+
+  void downloadAll(BuildContext context, List<BaseModel> songs) {
+    var downloader = context.read<DownloadBloc>();
+    for (var element in songs) {
+      downloader.add(SongDownloadEvent(baseModel: element));
+    }
   }
 }
 

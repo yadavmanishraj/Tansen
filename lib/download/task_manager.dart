@@ -40,6 +40,8 @@ class DownloadManager {
     initialize();
   }
 
+  Stream<List<DownloadTask>> get tasksList => _downloadTaskController.stream;
+
   Future<void> initialize() async {
     // await FlutterDownloader.initialize(debug: kDebugMode, ignoreSsl: true);
     init();
@@ -55,39 +57,46 @@ class DownloadManager {
 
     _receivePort.pipe(_tasksStreamContrller);
 
+    Logger logger = Logger();
+
     _tasksStreamContrller.listen(
       (dynamic data) async {
-        final taskId = data[0];
-        final DownloadTaskStatus status = DownloadTaskStatus.values[data[1]];
-        final int progress = data[2];
+        final _tasks = await FlutterDownloader.loadTasks();
 
-        DownloadTask? task;
-        bool isinList = false;
+        _downloadTaskController.add(_tasks ?? []);
 
-        try {
-          task = _downloadTaskController.value
-              .firstWhere((element) => element.taskId == taskId);
-          isinList = true;
-        } on StateError catch (_) {
-          final tasks = await FlutterDownloader.loadTasksWithRawQuery(
-              query: "SELECT * FROM task WHERE task_id = '$taskId'");
-          task = tasks?.first;
-        }
+        logger.d("There is no no more progress ${data[0]}");
+        // final taskId = data[0];
+        // final DownloadTaskStatus status = DownloadTaskStatus.values[data[1]];
+        // final int progress = data[2];
 
-        if (task != null) {
-          task =
-              task.copyWith(progress: progress, taskId: taskId, status: status);
+        // DownloadTask? task;
+        // bool isinList = false;
 
-          if (isinList) {
-            final taskIndex = _downloadTaskController.value
-                .indexWhere((element) => element.taskId == task!.taskId);
-            _downloadTaskController.value[taskIndex] == task;
-            _downloadTaskController.add(_downloadTaskController.value);
-          } else {
-            _downloadTaskController.value.add(task);
-            _downloadTaskController.add(_downloadTaskController.value);
-          }
-        }
+        // try {
+        //   task = _downloadTaskController.value
+        //       .firstWhere((element) => element.taskId == taskId);
+        //   isinList = true;
+        // } on StateError catch (_) {
+        //   final tasks = await FlutterDownloader.loadTasksWithRawQuery(
+        //       query: "SELECT * FROM task WHERE task_id = '$taskId'");
+        //   task = tasks?.first;
+        // }
+
+        // if (task != null) {
+        //   task =
+        //       task.copyWith(progress: progress, taskId: taskId, status: status);
+
+        //   if (isinList) {
+        //     final taskIndex = _downloadTaskController.value
+        //         .indexWhere((element) => element.taskId == task!.taskId);
+        //     _downloadTaskController.value[taskIndex] == task;
+        //     _downloadTaskController.add(_downloadTaskController.value);
+        //   } else {
+        //     _downloadTaskController.value.add(task);
+        //     _downloadTaskController.add(_downloadTaskController.value);
+        //   }
+        // }
       },
     );
 
@@ -105,11 +114,19 @@ class DownloadManager {
     return _tasksStreamContrller
         .where((event) => event[0] == taskId)
         .map((event) => event[2]);
+    // return _tasksStreamContrller
+    //     .where((event) => event[0] == taskId)
+    //     .map((event) => event[2]);
   }
 
   Stream<DownloadTaskStatus> getStatus(String taskId) {
     return _downloadTaskController.map((event) =>
         event.firstWhere((element) => element.taskId == taskId).status);
+  }
+
+  Stream<DownloadTask> getTask(String taskId) {
+    return _downloadTaskController.map((event) =>
+        event.firstWhere((element) => element.taskId == taskId));
   }
 
   Stream<List<DownloadTask>> get tasks => _downloadTaskController.stream;

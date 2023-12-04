@@ -66,14 +66,14 @@ class _ArtDisplayState extends State<ArtDisplay>
                 ),
               ),
             ),
-            const CircularProgressIndicator(
-              strokeWidth: 2,
-              value: .5,
-            ),
-            Icon(
-              Icons.file_download_outlined,
-              color: Theme.of(context).colorScheme.primary,
-            ),
+            // const CircularProgressIndicator(
+            //   strokeWidth: 2,
+            //   value: .5,
+            // ),
+            // Icon(
+            //   Icons.file_download_outlined,
+            //   color: Theme.of(context).colorScheme.primary,
+            // ),
           ],
         ),
       ),
@@ -156,9 +156,9 @@ class ArtContainer extends StatelessWidget {
                   ),
                   Row(
                     children: [
-                      const Icon(Icons.check_circle,
-                          size: 16, color: Colors.grey),
-                      SizedBox(width: 4),
+                      // const Icon(Icons.check_circle,
+                      //     size: 16, color: Colors.grey),
+                      // SizedBox(width: 4),
                       Expanded(
                         child: Text(
                           models.elementAt(index).subText,

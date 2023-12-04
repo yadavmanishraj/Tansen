@@ -112,6 +112,8 @@ class MusicPlayerBloc extends Bloc<MusicPlayerEvent, MusicPlayerState> {
         emit(state.copyWith(position: event.value));
       },
     );
+
+    on<MusicPlayerAddEventOffline>(_onOfflinePlayerCalled);
   }
 
   changeMusicIndex(int index) async {
@@ -162,5 +164,42 @@ class MusicPlayerBloc extends Bloc<MusicPlayerEvent, MusicPlayerState> {
 
   void seekprevious() {
     _audioPlayer.seekToPrevious();
+  }
+
+  FutureOr<void> _onOfflinePlayerCalled(
+      MusicPlayerAddEventOffline event, Emitter<MusicPlayerState> emit) {
+    _audioPlayer.setAudioSource(
+      ConcatenatingAudioSource(
+          children: event.baseModel
+              .map((e) => ProgressiveAudioSource(Uri.file(e.permaUrl)))
+              .toList()),
+      initialIndex: event.index,
+    );
+
+    emit(state.copyWith(
+        qeue: event.baseModel,
+        index: event.index,
+        nowPlaying: event.baseModel.first,
+        progress: _audioPlayer.positionStream
+            .transform(StreamTransformer.fromBind(transformToProgress))));
+
+    scheduleMicrotask(() async {
+      await _audioPlayer.play();
+
+      _audioPlayer.positionStream.listen((event) {
+        final duration = (_audioPlayer.duration ?? const Duration(seconds: 1))
+            .inMilliseconds;
+
+        final position = event.inMilliseconds;
+
+        final value = position / duration;
+
+        add(MusicPlayerChangePositionEvent(
+            value: (value.isNaN || value == double.infinity) ? 0 : value));
+      });
+      _audioPlayer.currentIndexStream.listen((event) {
+        add(MusicPlayerChangeIndexEvent(index: event ?? state.index));
+      });
+    });
   }
 }

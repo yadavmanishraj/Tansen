@@ -2,6 +2,7 @@
 import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:isar/isar.dart';
 import 'package:muisc_repository/muisc_repository.dart';
 
@@ -58,6 +59,9 @@ class DownloadBloc extends Bloc<DownloadEvent, DownloadState> {
   }
 
   Stream<double> progress(String modelId) => songDownloader.progress(modelId);
+  Stream<DownloadTaskStatus> status(String modelId) =>
+      songDownloader.status(modelId);
+  Stream<DownloadTask> task(String modelId) => songDownloader.task(modelId);
 
   FutureOr<void> _onDownloadEvent(
       DownloadEvent event, Emitter<DownloadState> emit) {
@@ -75,7 +79,10 @@ class DownloadBloc extends Bloc<DownloadEvent, DownloadState> {
 
       emit(DownloadState(
           isLoading: false,
-          baseModels: downloadModels.map((e) => e.toBaseModel()).toList()));
+          baseModels: downloadModels
+              .map((e) => e.toBaseModel(
+                  "${songDownloader.baseDir}/${e.modelId}/${e.modelId}.mp3"))
+              .toList()));
     });
   }
 

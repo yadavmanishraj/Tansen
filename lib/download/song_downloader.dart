@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
@@ -30,40 +31,73 @@ class SongDownloader {
   }
 
   Stream<double> progress(String id) async* {
-    StreamController<double> streamController = StreamController.broadcast();
+    StreamController<double> streamController = StreamController();
 
     var model =
         await isar.downloadModels.filter().modelIdEqualTo(id).findFirst();
-
-    isar.downloadModels.watchLazy(fireImmediately: true).listen((event) async {
-      model = await isar.downloadModels.filter().modelIdEqualTo(id).findFirst();
-      if (model != null) {
-        Rx.combineLatest2(downloadManager.getProgress(model!.taskId!),
-            downloadManager.getStatus(model!.taskId!), (progress, status) {
-          log("progress.toString()", name: "Progress");
-
-          if (status == DownloadTaskStatus.complete) {
-            streamController.add(100);
-          } else {
-            streamController.add(progress / 100);
-          }
-        }).doOnDone(() {
-          streamController.close();
-        });
-      }
-    });
     if (model != null) {
-      Rx.combineLatest2(
-          downloadManager.getProgress(id), downloadManager.getStatus(id),
-          (progress, status) {
-        if (status == DownloadTaskStatus.complete) {
-          streamController.add(1);
-        } else {
-          streamController.add(progress / 100);
+      downloadManager
+          .getProgress(model.taskId!)
+          .map((event) => event / 100)
+          .pipe(streamController);
+    } else {
+      isar.downloadModels
+          .watchLazy(fireImmediately: true)
+          .listen((event) async {
+        var model =
+            await isar.downloadModels.filter().modelIdEqualTo(id).findFirst();
+        if (model != null) {
+          downloadManager
+              .getProgress(model.taskId!)
+              .map((event) => event / 100)
+              .pipe(streamController);
         }
       });
+    }
+
+    yield* streamController.stream;
+  }
+
+  Stream<DownloadTaskStatus> status(String id) async* {
+    StreamController<DownloadTaskStatus> streamController = StreamController();
+
+    var model =
+        await isar.downloadModels.filter().modelIdEqualTo(id).findFirst();
+    if (model != null) {
+      downloadManager.getStatus(model.taskId!).pipe(streamController);
     } else {
-      streamController.add(0);
+      isar.downloadModels
+          .watchLazy(fireImmediately: true)
+          .listen((event) async {
+        var model =
+            await isar.downloadModels.filter().modelIdEqualTo(id).findFirst();
+        if (model != null) {
+          downloadManager.getStatus(model.taskId!).pipe(streamController);
+        }
+      });
+    }
+
+    yield* streamController.stream;
+  }
+
+
+  Stream<DownloadTask> task(String id) async* {
+    StreamController<DownloadTask> streamController = StreamController.broadcast();
+
+    var model =
+        await isar.downloadModels.filter().modelIdEqualTo(id).findFirst();
+    if (model != null) {
+      downloadManager.getTask(model.taskId!).pipe(streamController);
+    } else {
+      isar.downloadModels
+          .watchLazy(fireImmediately: true)
+          .listen((event) async {
+        var model =
+            await isar.downloadModels.filter().modelIdEqualTo(id).findFirst();
+        if (model != null) {
+          downloadManager.getTask(model.taskId!).pipe(streamController);
+        }
+      });
     }
 
     yield* streamController.stream;
