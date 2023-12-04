@@ -27,7 +27,7 @@ class _ArtDisplayState extends State<ArtDisplay>
   void initState() {
     super.initState();
     animationController =
-        AnimationController(vsync: this, duration: Duration(seconds: 1));
+        AnimationController(vsync: this, duration: const Duration(seconds: 1));
   }
 
   @override
@@ -47,21 +47,34 @@ class _ArtDisplayState extends State<ArtDisplay>
         width: size,
         height: size,
         duration: const Duration(milliseconds: 200),
-        child: RoundedBox(
-          radius: calculateRadius(),
-          child: CachedNetworkImage(
-            imageUrl: widget.baseModel.veryHigh!,
-            fit: BoxFit.cover,
-            placeholder: (context, url) => ColoredBox(
-              color: Theme.of(context).colorScheme.primaryContainer,
-            ),
-            errorWidget: (context, url, error) => ColoredBox(
-              color: Theme.of(context).colorScheme.primaryContainer,
-              child: const Center(
-                child: Icon(Icons.error_outline),
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            RoundedBox(
+              radius: calculateRadius(),
+              child: CachedNetworkImage(
+                imageUrl: widget.baseModel.veryHigh!,
+                fit: BoxFit.cover,
+                placeholder: (context, url) => ColoredBox(
+                  color: Theme.of(context).colorScheme.primaryContainer,
+                ),
+                errorWidget: (context, url, error) => ColoredBox(
+                  color: Theme.of(context).colorScheme.primaryContainer,
+                  child: const Center(
+                    child: Icon(Icons.error_outline),
+                  ),
+                ),
               ),
             ),
-          ),
+            const CircularProgressIndicator(
+              strokeWidth: 2,
+              value: .5,
+            ),
+            Icon(
+              Icons.file_download_outlined,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+          ],
         ),
       ),
     );
@@ -120,7 +133,7 @@ class ArtContainer extends StatelessWidget {
                         ));
               },
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(
                     height: 167.33,
@@ -141,15 +154,24 @@ class ArtContainer extends StatelessWidget {
                           height: 1, fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                   ),
-                  Text(
-                    models.elementAt(index).subText,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                        color: Theme.of(context)
-                            .colorScheme
-                            .onSurface
-                            .withOpacity(.5)),
+                  Row(
+                    children: [
+                      const Icon(Icons.check_circle,
+                          size: 16, color: Colors.grey),
+                      SizedBox(width: 4),
+                      Expanded(
+                        child: Text(
+                          models.elementAt(index).subText,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onSurface
+                                  .withOpacity(.5)),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),

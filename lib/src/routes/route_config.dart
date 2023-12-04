@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:muisc_repository/muisc_repository.dart';
+import 'package:tansen/download/download_page.dart';
 import 'package:tansen/src/features/home/home.dart';
 import 'package:tansen/src/features/search/view/search_view.dart';
 import 'package:tansen/src/routes/view/scaffold_with_navigator.dart';
@@ -37,7 +38,7 @@ final routes = GoRouter(
         StatefulShellBranch(routes: [
           GoRoute(
             path: '/library',
-            builder: (context, state) => const Text("Library Page"),
+            builder: (context, state) => const DownloadPage(),
           ),
         ])
       ],

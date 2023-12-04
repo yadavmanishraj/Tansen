@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:muisc_repository/muisc_repository.dart';
+import 'package:tansen/download/download_bloc.dart';
+import 'package:tansen/download/download_progress.dart';
 import 'package:tansen/src/features/player/bloc/music_player_bloc.dart';
 import 'package:tansen/src/widgets/art_display.dart';
 import 'package:tansen/src/widgets/basics.dart';
@@ -162,6 +164,42 @@ class _PlaylistDetailsPageState extends State<PlaylistDetailsPage> {
                           SliverList.builder(
                             itemCount: snapshot.data?.mainDetails?.length ?? 0,
                             itemBuilder: (context, index) => ListTile(
+                              onLongPress: () {
+                                showModalBottomSheet(
+                                    context: context,
+                                    useRootNavigator: true,
+                                    shape: const RoundedRectangleBorder(),
+                                    builder: (context) => Padding(
+                                          padding: EdgeInsets.only(
+                                              bottom: MediaQuery.of(context)
+                                                  .viewPadding
+                                                  .bottom),
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              ListTile(
+                                                onTap: () {
+                                                  context
+                                                      .read<DownloadBloc>()
+                                                      .add(
+                                                        SongDownloadEvent(
+                                                          baseModel: snapshot
+                                                                  .data!
+                                                                  .mainDetails![
+                                                              index],
+                                                        ),
+                                                      );
+                                                  Navigator.pop(context);
+                                                },
+                                                leading: const Icon(
+                                                    Icons.download_for_offline),
+                                                title:
+                                                    const Text("Downlaod Song"),
+                                              )
+                                            ],
+                                          ),
+                                        ));
+                              },
                               onTap: () {
                                 context.read<MusicPlayerBloc>().add(
                                     MusicPlayerAddEvent(
@@ -171,10 +209,32 @@ class _PlaylistDetailsPageState extends State<PlaylistDetailsPage> {
                               leading: AspectRatio(
                                 aspectRatio: 1,
                                 child: RoundedBox(
-                                    child: CachedNetworkImage(
-                                  imageUrl: snapshot
-                                          .data?.mainDetails?[index].veryHigh ??
-                                      "",
+                                    child: Stack(
+                                  alignment: Alignment.center,
+                                  children: [
+                                    CachedNetworkImage(
+                                      imageUrl: snapshot.data
+                                              ?.mainDetails?[index].veryHigh ??
+                                          "",
+                                    ),
+                                    DownloadProgressIndicator(modelId: snapshot
+                                              .data!.mainDetails![index].id!)
+                                    // StreamBuilder(
+                                    //   initialData: 0.0,
+                                    //   stream: context
+                                    //       .read<DownloadBloc>()
+                                    //       .progress(snapshot
+                                    //           .data!.mainDetails![index].id!),
+                                    //   builder: (context, snapshot) =>
+                                    //       CircularProgressIndicator(
+                                    //     strokeWidth: 2,
+                                    //     value: snapshot.data != null
+                                    //         ? snapshot.data!
+                                    //         : 0,
+                                    //   ),
+                                    // ),
+                                    // const Icon(Icons.file_download_outlined)
+                                  ],
                                 )),
                               ),
                               title: Text(
