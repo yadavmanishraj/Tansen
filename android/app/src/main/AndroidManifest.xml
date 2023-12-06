@@ -58,5 +58,8 @@
 </provider>
 <!-- End FlutterDownloader customization -->
 
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-4034355278641205~1112322995"/>
     </application>
 </manifest>
