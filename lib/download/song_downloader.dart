@@ -8,9 +8,20 @@ import 'package:isar/isar.dart';
 import 'package:muisc_repository/muisc_repository.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:rxdart/rxdart.dart';
+
 import 'package:tansen/download/download_bloc.dart';
 import 'package:tansen/download/download_model.dart';
+import 'package:tansen/download/song_collection.dart';
 import 'package:tansen/download/task_manager.dart';
+
+class DownloadedModel {
+  DownloadTask task;
+  String modelId;
+  DownloadedModel({
+    required this.task,
+    required this.modelId,
+  });
+}
 
 class SongDownloader {
   Isar isar;
@@ -28,6 +39,7 @@ class SongDownloader {
     final downloadDir = await getDownloadsDirectory();
     baseDir = (await Directory("${downloadDir?.path}/songs").create()).path;
     _initialized = true;
+    streamInit();
   }
 
   Stream<double> progress(String id) async* {
@@ -58,6 +70,28 @@ class SongDownloader {
     yield* streamController.stream;
   }
 
+  BehaviorSubject<List<DownloadedModel>> songsList = BehaviorSubject();
+
+  close() {
+    songsList.close();
+  }
+
+  streamInit() async {
+    var songs = await isar.downloadModels.filter().modelIdIsNotNull().findAll();
+    isar.downloadModels.watchLazy(fireImmediately: true).listen((event) async {
+      songs = await isar.downloadModels.filter().modelIdIsNotNull().findAll();
+      downloadManager.tasksList
+          .map((event) => event
+              .map((e) => DownloadedModel(
+                  task: e,
+                  modelId: songs
+                      .firstWhere((element) => element.taskId == e.taskId)
+                      .modelId!))
+              .toList())
+          .pipe(songsList);
+    });
+  }
+
   Stream<DownloadTaskStatus> status(String id) async* {
     StreamController<DownloadTaskStatus> streamController = StreamController();
 
@@ -80,9 +114,25 @@ class SongDownloader {
     yield* streamController.stream;
   }
 
+  Stream<DownloadTask> taskAlt(String id) {
+    return songsList.flatMap((value) => Stream.value(
+        value.firstWhere((element) => element.modelId == id).task));
+  }
+
+  Stream<double> progressAlt(String id) {
+    return songsList.flatMap((value) => Stream.value(
+        value.firstWhere((element) => element.modelId == id).task.progress /
+            100));
+  }
+
+  Stream<DownloadTaskStatus> statusAlt(String id) {
+    return songsList.flatMap((value) => Stream.value(
+        value.firstWhere((element) => element.modelId == id).task.status));
+  }
 
   Stream<DownloadTask> task(String id) async* {
-    StreamController<DownloadTask> streamController = StreamController.broadcast();
+    StreamController<DownloadTask> streamController =
+        StreamController.broadcast();
 
     var model =
         await isar.downloadModels.filter().modelIdEqualTo(id).findFirst();
@@ -126,5 +176,18 @@ class SongDownloader {
             .put(DownloadModel.fromBaseModel(baseModel, taskId!));
       }
     });
+  }
+
+  downloadSongs(BaseModel collection, List<BaseModel> songs) async {
+    isar.writeTxn(() async {
+      isar.songCollections.put(SongCollection(
+          imageSrc: collection.veryHigh,
+          subTitle: collection.subText,
+          title: collection.title,
+          type: collection.type,
+          modelId: collection.id!,
+          songs: songs.map((e) => e.id!).toList()));
+    });
+    songs.forEach(downloadSong);
   }
 }

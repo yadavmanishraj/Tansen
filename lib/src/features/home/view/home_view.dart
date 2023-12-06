@@ -11,6 +11,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:muisc_repository/muisc_repository.dart';
+import 'package:tansen/download/task_manager.dart';
 import 'package:tansen/src/features/player/view/play_pause_button.dart';
 import 'package:tansen/src/features/search/view/search_view.dart';
 import 'package:tansen/src/widgets/art_display.dart';

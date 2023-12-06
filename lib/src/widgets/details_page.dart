@@ -99,8 +99,12 @@ class _PlaylistDetailsPageState extends State<PlaylistDetailsPage> {
                                                 .inversePrimary
                                                 .withOpacity(.1)),
                                         onPressed: () {
-                                          downloadAll(context,
-                                              snapshot.data!.mainDetails!);
+                                          context
+                                              .read<DownloadBloc>()
+                                              .songDownloader
+                                              .downloadSongs(
+                                                  snapshot.data!.baseModel,
+                                                  snapshot.data!.mainDetails!);
                                         },
                                         icon: const Icon(
                                             Icons.file_download_outlined)),
@@ -206,9 +210,10 @@ class _PlaylistDetailsPageState extends State<PlaylistDetailsPage> {
                               },
                               onTap: () {
                                 context.read<MusicPlayerBloc>().add(
-                                    MusicPlayerAddEvent(
+                                    MusicPlayerAddEventOffline(
                                         index: index,
-                                        baseModel: snapshot.data!.baseModel));
+                                        baseModel:
+                                            snapshot.data!.mainDetails!));
                               },
                               leading: AspectRatio(
                                 aspectRatio: 1,
@@ -278,12 +283,12 @@ class _PlaylistDetailsPageState extends State<PlaylistDetailsPage> {
     );
   }
 
-  void downloadAll(BuildContext context, List<BaseModel> songs) {
-    var downloader = context.read<DownloadBloc>();
-    for (var element in songs) {
-      downloader.add(SongDownloadEvent(baseModel: element));
-    }
-  }
+  // void downloadAll(BuildContext context, List<BaseModel> songs) {
+  //   var downloader = context.read<DownloadBloc>();
+  //   for (var element in songs) {
+  //     downloader.add(SongDownloadEvent(baseModel: element));
+  //   }
+  // }
 }
 
 class DetailsHeader extends StatefulWidget {

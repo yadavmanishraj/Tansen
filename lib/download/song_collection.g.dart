@@ -22,23 +22,28 @@ const SongCollectionSchema = CollectionSchema(
       name: r'imageSrc',
       type: IsarType.string,
     ),
-    r'songs': PropertySchema(
+    r'modelId': PropertySchema(
       id: 1,
+      name: r'modelId',
+      type: IsarType.string,
+    ),
+    r'songs': PropertySchema(
+      id: 2,
       name: r'songs',
       type: IsarType.stringList,
     ),
     r'subTitle': PropertySchema(
-      id: 2,
+      id: 3,
       name: r'subTitle',
       type: IsarType.string,
     ),
     r'title': PropertySchema(
-      id: 3,
+      id: 4,
       name: r'title',
       type: IsarType.string,
     ),
     r'type': PropertySchema(
-      id: 4,
+      id: 5,
       name: r'type',
       type: IsarType.string,
     )
@@ -69,6 +74,7 @@ int _songCollectionEstimateSize(
       bytesCount += 3 + value.length * 3;
     }
   }
+  bytesCount += 3 + object.modelId.length * 3;
   bytesCount += 3 + object.songs.length * 3;
   {
     for (var i = 0; i < object.songs.length; i++) {
@@ -104,10 +110,11 @@ void _songCollectionSerialize(
   Map<Type, List<int>> allOffsets,
 ) {
   writer.writeString(offsets[0], object.imageSrc);
-  writer.writeStringList(offsets[1], object.songs);
-  writer.writeString(offsets[2], object.subTitle);
-  writer.writeString(offsets[3], object.title);
-  writer.writeString(offsets[4], object.type);
+  writer.writeString(offsets[1], object.modelId);
+  writer.writeStringList(offsets[2], object.songs);
+  writer.writeString(offsets[3], object.subTitle);
+  writer.writeString(offsets[4], object.title);
+  writer.writeString(offsets[5], object.type);
 }
 
 SongCollection _songCollectionDeserialize(
@@ -117,13 +124,14 @@ SongCollection _songCollectionDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = SongCollection(
-    id: id,
     imageSrc: reader.readStringOrNull(offsets[0]),
-    songs: reader.readStringList(offsets[1]) ?? [],
-    subTitle: reader.readStringOrNull(offsets[2]),
-    title: reader.readStringOrNull(offsets[3]),
-    type: reader.readStringOrNull(offsets[4]),
+    modelId: reader.readString(offsets[1]),
+    songs: reader.readStringList(offsets[2]) ?? [],
+    subTitle: reader.readStringOrNull(offsets[3]),
+    title: reader.readStringOrNull(offsets[4]),
+    type: reader.readStringOrNull(offsets[5]),
   );
+  object.id = id;
   return object;
 }
 
@@ -137,12 +145,14 @@ P _songCollectionDeserializeProp<P>(
     case 0:
       return (reader.readStringOrNull(offset)) as P;
     case 1:
-      return (reader.readStringList(offset) ?? []) as P;
+      return (reader.readString(offset)) as P;
     case 2:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readStringList(offset) ?? []) as P;
     case 3:
       return (reader.readStringOrNull(offset)) as P;
     case 4:
+      return (reader.readStringOrNull(offset)) as P;
+    case 5:
       return (reader.readStringOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -449,6 +459,142 @@ extension SongCollectionQueryFilter
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'imageSrc',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<SongCollection, SongCollection, QAfterFilterCondition>
+      modelIdEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'modelId',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<SongCollection, SongCollection, QAfterFilterCondition>
+      modelIdGreaterThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'modelId',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<SongCollection, SongCollection, QAfterFilterCondition>
+      modelIdLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'modelId',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<SongCollection, SongCollection, QAfterFilterCondition>
+      modelIdBetween(
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'modelId',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<SongCollection, SongCollection, QAfterFilterCondition>
+      modelIdStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'modelId',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<SongCollection, SongCollection, QAfterFilterCondition>
+      modelIdEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'modelId',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<SongCollection, SongCollection, QAfterFilterCondition>
+      modelIdContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'modelId',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<SongCollection, SongCollection, QAfterFilterCondition>
+      modelIdMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'modelId',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<SongCollection, SongCollection, QAfterFilterCondition>
+      modelIdIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'modelId',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<SongCollection, SongCollection, QAfterFilterCondition>
+      modelIdIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'modelId',
         value: '',
       ));
     });
@@ -1163,6 +1309,19 @@ extension SongCollectionQuerySortBy
     });
   }
 
+  QueryBuilder<SongCollection, SongCollection, QAfterSortBy> sortByModelId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'modelId', Sort.asc);
+    });
+  }
+
+  QueryBuilder<SongCollection, SongCollection, QAfterSortBy>
+      sortByModelIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'modelId', Sort.desc);
+    });
+  }
+
   QueryBuilder<SongCollection, SongCollection, QAfterSortBy> sortBySubTitle() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'subTitle', Sort.asc);
@@ -1228,6 +1387,19 @@ extension SongCollectionQuerySortThenBy
     });
   }
 
+  QueryBuilder<SongCollection, SongCollection, QAfterSortBy> thenByModelId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'modelId', Sort.asc);
+    });
+  }
+
+  QueryBuilder<SongCollection, SongCollection, QAfterSortBy>
+      thenByModelIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'modelId', Sort.desc);
+    });
+  }
+
   QueryBuilder<SongCollection, SongCollection, QAfterSortBy> thenBySubTitle() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'subTitle', Sort.asc);
@@ -1275,6 +1447,13 @@ extension SongCollectionQueryWhereDistinct
     });
   }
 
+  QueryBuilder<SongCollection, SongCollection, QDistinct> distinctByModelId(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'modelId', caseSensitive: caseSensitive);
+    });
+  }
+
   QueryBuilder<SongCollection, SongCollection, QDistinct> distinctBySongs() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'songs');
@@ -1314,6 +1493,12 @@ extension SongCollectionQueryProperty
   QueryBuilder<SongCollection, String?, QQueryOperations> imageSrcProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'imageSrc');
+    });
+  }
+
+  QueryBuilder<SongCollection, String, QQueryOperations> modelIdProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'modelId');
     });
   }
 

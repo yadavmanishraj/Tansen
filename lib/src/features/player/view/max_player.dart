@@ -30,7 +30,7 @@ class MaxPlayer extends StatelessWidget {
               height: 100,
             ),
             SizedBox(
-              height: 300,
+              height: 400,
               child: PlayerCarasaul(),
             ),
             Padding(

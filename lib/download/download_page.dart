@@ -1,4 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:get_it/get_it.dart';
+import 'package:go_router/go_router.dart';
 import 'package:logger/logger.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -31,9 +33,97 @@ class DownloadView extends StatelessWidget {
               child: CircularProgressIndicator(),
             );
           } else {
-            return MusicTileList(songs: state.baseModels);
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16.0),
+                  child: Text(
+                    "Downloads",
+                    style: TextStyle(fontSize: 32),
+                  ),
+                ),
+                SizedBox(height: 16),
+                Expanded(child: DownloadGrid(collections: state.baseModels)),
+              ],
+            );
           }
         },
+      ),
+    );
+  }
+}
+
+class DownloadGrid extends StatelessWidget {
+  const DownloadGrid({super.key, required this.collections});
+  final List<BaseModel> collections;
+
+  @override
+  Widget build(BuildContext context) {
+    return GridView.builder(
+      itemCount: collections.length,
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        childAspectRatio: 215 / 260,
+        // mainAxisSpacing: 16,
+        // crossAxisSpacing: 16,
+      ),
+      itemBuilder: (context, index) => InkWell(
+        onTap: () async {
+          // context.read<MusicPlayerBloc>().add(
+          //     MusicPlayerAddEvent(baseModel: collections.elementAt(index)));
+          context.push(
+            "/details",
+            extra: Future.value(DetailsModel(
+                baseModel: collections[index],
+                mainDetails: await context
+                    .read<DownloadBloc>()
+                    .getSongs(collections[index]))),
+          );
+        },
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(
+              height: 167.33,
+              width: 167.33,
+              child: Center(
+                child: ArtDisplay(
+                  baseModel: collections.elementAt(index),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 4.0),
+              child: Text(
+                collections.elementAt(index).title!,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                    height: 1, fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+            ),
+            Row(
+              children: [
+                const Icon(Icons.check_circle, size: 16, color: Colors.grey),
+                const SizedBox(width: 4),
+                Expanded(
+                  child: Text(
+                    collections.elementAt(index).subText,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                        color: Theme.of(context)
+                            .colorScheme
+                            .onSurface
+                            .withOpacity(.5)),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

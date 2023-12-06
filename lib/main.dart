@@ -6,6 +6,7 @@ import 'package:isar/isar.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:tansen/download/download_bloc.dart';
 import 'package:tansen/download/download_model.dart';
+import 'package:tansen/download/song_collection.dart';
 import 'package:tansen/download/task_manager.dart';
 import 'package:tansen/inject.dart';
 import 'package:tansen/player_bloc_observer.dart';
@@ -16,7 +17,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   setUpDependencies();
   await FlutterDownloader.initialize(debug: true, ignoreSsl: true);
-  await Isar.open([DownloadModelSchema],
+  await Isar.open([DownloadModelSchema, SongCollectionSchema],
       directory: (await getApplicationCacheDirectory()).path);
   // Bloc.observer = AppBlocObserverBlocObserver();
   runApp(const App());
