@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:get_it/get_it.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:isar/isar.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:tansen/download/download_bloc.dart';
@@ -20,6 +21,7 @@ void main() async {
   await Isar.open([DownloadModelSchema, SongCollectionSchema],
       directory: (await getApplicationCacheDirectory()).path);
   // Bloc.observer = AppBlocObserverBlocObserver();
+  await MobileAds.instance.initialize();
   runApp(const App());
 }
 

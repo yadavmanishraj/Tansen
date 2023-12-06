@@ -1,10 +1,12 @@
 import 'dart:developer';
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:muisc_repository/muisc_repository.dart';
 import 'package:tansen/download/download_bloc.dart';
 import 'package:tansen/download/download_progress.dart';
@@ -44,6 +46,40 @@ class PlaylistDetailsPage extends StatefulWidget {
 
 class _PlaylistDetailsPageState extends State<PlaylistDetailsPage> {
   final ScrollController scrollController = ScrollController();
+
+  RewardedAd? _rewardedAd;
+
+  final adUnitId = Platform.isAndroid
+      ? 'ca-app-pub-3940256099942544/5224354917'
+      : 'ca-app-pub-3940256099942544/1712485313';
+
+  void loadAd() {
+    RewardedAd.load(
+        adUnitId: adUnitId,
+        request: const AdRequest(),
+        rewardedAdLoadCallback: RewardedAdLoadCallback(
+          // Called when an ad is successfully received.
+          onAdLoaded: (ad) {
+            debugPrint('$ad loaded.');
+            // Keep a reference to the ad so you can show it later.
+            _rewardedAd = ad;
+
+            ad.fullScreenContentCallback = FullScreenContentCallback(
+                onAdClicked: (e) {},
+                onAdDismissedFullScreenContent: (ad) {
+                  ad.dispose();
+                },
+                onAdFailedToShowFullScreenContent: (ad, err) {
+                  ad.dispose();
+                },
+                onAdWillDismissFullScreenContent: (e) {});
+          },
+          // Called when an ad request failed.
+          onAdFailedToLoad: (LoadAdError error) {
+            debugPrint('RewardedAd failed to load: $error');
+          },
+        ));
+  }
 
   @override
   void initState() {
@@ -99,12 +135,15 @@ class _PlaylistDetailsPageState extends State<PlaylistDetailsPage> {
                                                 .inversePrimary
                                                 .withOpacity(.1)),
                                         onPressed: () {
-                                          context
-                                              .read<DownloadBloc>()
-                                              .songDownloader
-                                              .downloadSongs(
-                                                  snapshot.data!.baseModel,
-                                                  snapshot.data!.mainDetails!);
+                                          _rewardedAd?.show(onUserEarnedReward: (reward,item) {
+                                            context
+                                                .read<DownloadBloc>()
+                                                .songDownloader
+                                                .downloadSongs(
+                                                snapshot.data!.baseModel,
+                                                snapshot.data!.mainDetails!);
+                                          });
+
                                         },
                                         icon: const Icon(
                                             Icons.file_download_outlined)),
