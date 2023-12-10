@@ -47,6 +47,19 @@ class DownloadManager {
     init();
   }
 
+  bind() {
+    final result = IsolateNameServer.registerPortWithName(
+        _receivePort.sendPort, "download_sendport");
+    if (!result) {
+      IsolateNameServer.removePortNameMapping("download_sendport");
+      bind();
+    }
+  }
+
+  unBind() {
+    IsolateNameServer.removePortNameMapping("download_sendport");
+  }
+
   init() async {
     final _tasks = await FlutterDownloader.loadTasks();
 
@@ -103,6 +116,10 @@ class DownloadManager {
     await FlutterDownloader.registerCallback(progressTracker);
   }
 
+  dispose() {
+    unBind();
+  }
+
   @pragma('vm:entry-point')
   static void progressTracker(String id, int status, int progress) {
     final SendPort sendPort =
@@ -125,8 +142,8 @@ class DownloadManager {
   }
 
   Stream<DownloadTask> getTask(String taskId) {
-    return _downloadTaskController.map((event) =>
-        event.firstWhere((element) => element.taskId == taskId));
+    return _downloadTaskController.map(
+        (event) => event.firstWhere((element) => element.taskId == taskId));
   }
 
   Stream<List<DownloadTask>> get tasks => _downloadTaskController.stream;

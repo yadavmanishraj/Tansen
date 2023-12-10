@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter_downloader/flutter_downloader.dart';
+import 'package:get_it/get_it.dart';
 import 'package:isar/isar.dart';
 import 'package:muisc_repository/muisc_repository.dart';
 import 'package:path_provider/path_provider.dart';
@@ -13,6 +14,7 @@ import 'package:tansen/download/download_bloc.dart';
 import 'package:tansen/download/download_model.dart';
 import 'package:tansen/download/song_collection.dart';
 import 'package:tansen/download/task_manager.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 
 class DownloadedModel {
   DownloadTask task;
@@ -154,6 +156,7 @@ class SongDownloader {
   }
 
   downloadSong(BaseModel baseModel) async {
+    DefaultCacheManager().downloadFile(baseModel.veryHigh!);
     isar.writeTxn(() async {
       final model = await isar.downloadModels
           .filter()
@@ -180,13 +183,19 @@ class SongDownloader {
 
   downloadSongs(BaseModel collection, List<BaseModel> songs) async {
     isar.writeTxn(() async {
-      isar.songCollections.put(SongCollection(
-          imageSrc: collection.veryHigh,
-          subTitle: collection.subText,
-          title: collection.title,
-          type: collection.type,
-          modelId: collection.id!,
-          songs: songs.map((e) => e.id!).toList()));
+      var collectiond = await isar.songCollections
+          .filter()
+          .modelIdEqualTo(collection.id!)
+          .findFirst();
+      if (collectiond == null) {
+        isar.songCollections.put(SongCollection(
+            imageSrc: collection.veryHigh,
+            subTitle: collection.subText,
+            title: collection.title,
+            type: collection.type,
+            modelId: collection.id!,
+            songs: songs.map((e) => e.id!).toList()));
+      }
     });
     songs.forEach(downloadSong);
   }

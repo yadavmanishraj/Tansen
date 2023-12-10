@@ -71,7 +71,7 @@ class _PlayerCarasaulState extends State<PlayerCarasaul> {
           itemCount: state.qeue.length,
           itemBuilder: (context, index) => Center(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              padding: const EdgeInsets.symmetric(horizontal: 32.0),
               child: RoundedBox(
                 radius: 8,
                 child:

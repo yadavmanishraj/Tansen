@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:muisc_repository/muisc_repository.dart';
+import 'package:tansen/main.dart';
 import 'package:tansen/src/features/player/bloc/music_player_bloc.dart';
 import 'package:tansen/src/features/player/view/mini_player_widget.dart';
 import 'package:tansen/src/features/player/view/play_pause_button.dart';
@@ -49,9 +50,7 @@ class _ScaffoldWithNavigatorState extends State<ScaffoldWithNavigator> {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-        statusBarColor: colorScheme.surface,
-        systemNavigationBarColor: Colors.transparent));
+    fullScreen();
     return Scaffold(
       body: widget.state,
       extendBody: true,

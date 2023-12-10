@@ -41,12 +41,13 @@ class HomeView extends StatelessWidget {
       listener: (context, state) {
         if (state.homeStatus == HomeStatus.error) {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Row(
-              children: [
-                const Expanded(child: Text("No connection")),
-                TextButton(onPressed: () {}, child: const Text("Refresh"))
-              ],
+            action: SnackBarAction(
+              label: "Retry",
+              onPressed: () {
+                context.read<HomeBloc>().add(HomeEventInitial());
+              },
             ),
+            content: const Text("No Connection"),
           ));
         }
       },
@@ -143,12 +144,17 @@ class _HomeDataViewState extends State<HomeDataView> {
       //   ],
       // )),
       image:
-          "https://images.unsplash.com/photo-1579546929518-9e396f3cc809?q=80&w=1770&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+          "https://images.unsplash.com/photo-1523821741446-edb2b68bb7a0?q=80&w=1770&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       child: CustomScrollView(
         controller: scrollController,
         slivers: [
-          HomeAppbar(colorscheme: colorscheme),
-          const CategoryBar(),
+          HomeAppbar(
+            colorscheme: colorscheme,
+            scrollController: scrollController,
+          ),
+          CategoryBar(
+            scrollController: scrollController,
+          ),
           SliverList.builder(
             itemCount: widget.data?.length ?? 0,
             itemBuilder: (context, index) => Padding(
@@ -166,54 +172,121 @@ class _HomeDataViewState extends State<HomeDataView> {
 }
 
 class HomeAppbar extends StatefulWidget {
-  const HomeAppbar({
-    super.key,
-    required this.colorscheme,
-  });
+  const HomeAppbar(
+      {super.key, required this.colorscheme, required this.scrollController});
 
   final ColorScheme colorscheme;
+  final ScrollController scrollController;
 
   @override
   State<HomeAppbar> createState() => _HomeAppbarState();
 }
 
 class _HomeAppbarState extends State<HomeAppbar> {
-  bool pinned = false;
-  bool floating = true;
+  final StreamController<double> streamController =
+      StreamController.broadcast();
+
+  @override
+  void initState() {
+    super.initState();
+    widget.scrollController.addListener(() {
+      updatePosition();
+    });
+  }
+
+  void updatePosition() {
+    if (widget.scrollController.hasClients) {
+      streamController.add(widget.scrollController.offset);
+    }
+  }
+
+  double calculateOpacity(double value) {
+    if (value > 60) return 1;
+    return value / 60;
+  }
 
   @override
   Widget build(BuildContext context) {
-    return SliverAppBar(
-      backgroundColor: Colors.transparent,
-      titleSpacing: 0,
-      titleTextStyle:
-          const TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-      actions: [
-        IconButton(
-            onPressed: () {
-              context.push(SearchPage.route);
-            },
-            icon: const Icon(Icons.search)),
-        const PlayPauseButton()
-      ],
-      leading: Padding(
-        padding: const EdgeInsets.only(left: 8),
-        child: Icon(
-          Icons.music_note_outlined,
-          size: 44,
-          color: Theme.of(context).colorScheme.surface,
-        ),
-      ),
-      title: Text(
-        "Music",
-        style: TextStyle(
-          fontWeight: FontWeight.bold,
-          fontFamily: "Foxcon",
-          letterSpacing: -1,
-          color: Theme.of(context).colorScheme.surface,
-        ),
-      ),
-    );
+    return StreamBuilder<double>(
+        stream: streamController.stream,
+        initialData: 0,
+        builder: (context, snapshot) {
+          return SliverAppBar(
+            shadowColor: Colors.transparent,
+            surfaceTintColor: Colors.transparent,
+            elevation: 0,
+            backgroundColor: Theme.of(context)
+                .colorScheme
+                .surface
+                .withOpacity(calculateOpacity(snapshot.data!)),
+            titleSpacing: 0,
+            floating: true,
+            titleTextStyle:
+                const TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+            actions: [
+              IconButton(
+                  onPressed: () {
+                    context.push(SearchPage.route);
+                  },
+                  icon: const Icon(Icons.search)),
+              // const PlayPauseButton()
+            ],
+            leading: Padding(
+              padding: const EdgeInsets.only(left: 16),
+              child: Badge(
+                alignment: Alignment.bottomLeft,
+                label: const Text("Preview"),
+                backgroundColor: Colors.amber,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Image.asset(
+                      "assets/icons/app.png",
+                      width: 44,
+                    ),
+                    ShaderMask(
+                      shaderCallback: (rect) => const LinearGradient(colors: [
+                        Colors.blueAccent,
+                        Colors.purpleAccent,
+                        Colors.cyanAccent,
+                      ]).createShader(rect),
+                      child: const Text(
+                        "Tansen",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: -1,
+                          fontSize: 32,
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            ),
+            leadingWidth: 160,
+            // leading: Padding(
+            //   padding: const EdgeInsets.only(left: 8),
+            //   child: Icon(
+            //     Icons.music_note_outlined,
+            //     size: 44,
+            //     color: Theme.of(context).colorScheme.surface,
+            //   ),
+            // ),
+            // title: Badge(
+            //   label: const Text("Preview"),
+            //   backgroundColor: Colors.amber,
+            //   child: Text(
+            //     "Music",
+            //     style: TextStyle(
+            //       fontWeight: FontWeight.bold,
+            //       fontFamily: "Foxcon",
+            //       letterSpacing: -1,
+            //       color: Theme.of(context).colorScheme.surface,
+            //     ),
+            //   ),
+            // ),
+          );
+        });
   }
 }
 
@@ -300,7 +373,7 @@ class _PositionedGradientState extends State<PositionedGradient> {
 
   void updatePosition() {
     if (widget.scrollController.hasClients) {
-      streamController.add(widget.scrollController.offset);
+      streamController.add(widget.scrollController.offset + 30);
     }
   }
 
@@ -313,7 +386,7 @@ class _PositionedGradientState extends State<PositionedGradient> {
   Widget build(BuildContext context) {
     return StreamBuilder<double>(
         stream: streamController.stream,
-        initialData: 0,
+        initialData: 30,
         builder: (context, snapshot) {
           return Container(
             height: 400,
@@ -390,10 +463,14 @@ class AppChip extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Material(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+          side: BorderSide(
+              width: 1,
+              color: Theme.of(context).colorScheme.onSurface.withOpacity(.15))),
       color: selected
           ? Colors.white
-          : Theme.of(context).colorScheme.inversePrimary.withOpacity(.4),
+          : Theme.of(context).colorScheme.onSurface.withOpacity(.15),
       borderOnForeground: true,
       surfaceTintColor: Colors.transparent,
       child: InkWell(
@@ -421,41 +498,34 @@ class AppChip extends StatelessWidget {
 }
 
 class CategoryBar extends StatefulWidget {
-  const CategoryBar({
-    super.key,
-  });
+  const CategoryBar({super.key, required this.scrollController});
+  final ScrollController scrollController;
 
   @override
   State<CategoryBar> createState() => _CategoryBarState();
 }
 
 class _CategoryBarState extends State<CategoryBar> {
-  StreamController<double> streamController = StreamController.broadcast();
+  final StreamController<double> streamController =
+      StreamController.broadcast();
 
   @override
-  initState() {
+  void initState() {
     super.initState();
+    widget.scrollController.addListener(() {
+      updatePosition();
+    });
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    (Scrollable.of(context).position.addListener(() {
-      var offset = Scrollable.of(context).position.pixels;
-      if (offset <= 60) {
-        streamController.add(offset);
-      }
-    }));
+  void updatePosition() {
+    if (widget.scrollController.hasClients) {
+      streamController.add(widget.scrollController.offset);
+    }
   }
 
   double calculateOpacity(double value) {
-    try {
-      var result = value / 500;
-      if (result > .5 || result.isNaN || value > 50) return 1;
-      return 0;
-    } catch (e) {
-      return 1;
-    }
+    if (value > 60) return 1;
+    return value / 60;
   }
 
   @override
@@ -464,7 +534,7 @@ class _CategoryBarState extends State<CategoryBar> {
       backgroundColor: Colors.transparent,
       foregroundColor: Colors.transparent,
       surfaceTintColor: Colors.transparent,
-      floating: true,
+      // floating: true,
       toolbarHeight: 80,
       pinned: true,
       titleSpacing: 0,
@@ -488,7 +558,7 @@ class _CategoryBarState extends State<CategoryBar> {
                         child: ThemedIcon(
                           avatar: Icons.bolt,
                           label: "Energize",
-                          selected: true,
+                          // selected: true,
                         ),
                       ),
                       ThemedIcon(

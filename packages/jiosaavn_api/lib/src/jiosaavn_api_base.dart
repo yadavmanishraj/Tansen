@@ -62,7 +62,8 @@ class JioSaavnApi {
         throw Exception("Request Failed ${response.statusCode}");
       }
 
-      final jsonBody = await Isolate.run(() => jsonDecode(response.body));
+      final jsonBody =
+          await Isolate.run(() => jsonDecode(response.body)) as Map;
       return jsonBody;
     } catch (e) {
       throw Exception("Someting Went Wrong $e");
