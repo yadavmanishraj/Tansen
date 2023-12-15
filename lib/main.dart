@@ -46,7 +46,7 @@ class App extends StatefulWidget {
   State<App> createState() => _AppState();
 }
 
-class _AppState extends State<App>{
+class _AppState extends State<App> {
   @override
   void initState() {
     super.initState();
@@ -69,8 +69,13 @@ class _AppState extends State<App>{
       ],
       child: MaterialApp.router(
         debugShowCheckedModeBanner: false,
-        theme: ThemeData(
+        themeMode: ThemeMode.system,
+        darkTheme: ThemeData(
+          colorSchemeSeed: Colors.pink,
           brightness: Brightness.dark,
+          fontFamily: "Foxcon",
+        ),
+        theme: ThemeData(
           colorSchemeSeed: Colors.pink[900],
           useMaterial3: true,
           fontFamily: "Foxcon",

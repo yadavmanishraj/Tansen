@@ -58,7 +58,7 @@ class _PlayerCarasaulState extends State<PlayerCarasaul> {
       listenWhen: (previous, current) => previous.index != current.index,
       builder: (context, state) {
         return PageView.builder(
-          scrollBehavior: const ScrollBehavior(),
+          // scrollBehavior: const ScrollBehavior(),
           controller: pageController,
           onPageChanged: (value) {
             if (state.index != value) {

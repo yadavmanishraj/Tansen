@@ -39,6 +39,8 @@ class MusicPlayerBloc extends Bloc<MusicPlayerEvent, MusicPlayerState> {
       },
     );
 
+    initQueIndexed();
+
     on<MusicPlayerEventPause>((event, emit) async {
       await _audioPlayer.pause();
     });
@@ -98,7 +100,7 @@ class MusicPlayerBloc extends Bloc<MusicPlayerEvent, MusicPlayerState> {
                 displayTitle: e.title!,
                 displaySubtitle: e.songDetailsExtra?.artists?.primaryArtists
                     .map((e) => e.name)
-                    .join(","),
+                    .join(", "),
                 artUri: Uri.parse(
                   e.image!.replaceAll("150x150", "500x500"),
                 ),
@@ -140,6 +142,7 @@ class MusicPlayerBloc extends Bloc<MusicPlayerEvent, MusicPlayerState> {
     );
 
     on<MusicPlayerAddEventOffline>(_onOfflinePlayerCalled);
+    on<IndexedQueChangedEvent>(_onIndexedQueueChanged);
   }
 
   changeMusicIndex(int index) async {
@@ -259,8 +262,52 @@ class MusicPlayerBloc extends Bloc<MusicPlayerEvent, MusicPlayerState> {
       add(MusicPlayerChangePositionEvent(
           value: (value.isNaN || value == double.infinity) ? 0 : value));
     });
-    _audioPlayer.currentIndexStream.listen((event) {
-      add(MusicPlayerChangeIndexEvent(index: event ?? state.index));
+    // _audioPlayer.currentIndexStream.listen((event) {
+    //   add(MusicPlayerChangeIndexEvent(index: event ?? state.index));
+    // });
+  }
+
+  Stream<LoopMode> get loopMode => appAudioHandler.loopMode.distinct();
+  Future<void> setLoopMode(LoopMode loopMode) async {
+    switch (loopMode) {
+      case LoopMode.off:
+        appAudioHandler.setRepeatMode(AudioServiceRepeatMode.none);
+      case LoopMode.one:
+        appAudioHandler.setRepeatMode(AudioServiceRepeatMode.one);
+      case LoopMode.all:
+        appAudioHandler.setRepeatMode(AudioServiceRepeatMode.all);
+    }
+  }
+
+  Stream<bool> get shuffleMode => appAudioHandler.shuffleMode;
+  Stream<BaseModel?> get nowPlaying =>
+      appAudioHandler.mediaItem.map((event) => event?.baseModel);
+
+  Stream<PlayerState> get processingStateStream =>
+      _audioPlayer.playerStateStream;
+
+  Future<void> initQueIndexed() async {
+    Rx.combineLatest2(appAudioHandler.queue, appAudioHandler.currentIndex,
+        (queue, index) {
+      add(IndexedQueChangedEvent(
+          index: index, queue: queue.map((e) => e.baseModel).toList()));
     });
+  }
+
+  FutureOr<void> _onIndexedQueueChanged(
+      IndexedQueChangedEvent event, Emitter<MusicPlayerState> emit) {
+    emit(state.copyWith(qeue: event.queue, index: event.index));
+  }
+}
+
+extension on MediaItem {
+  BaseModel get baseModel {
+    return BaseModel(
+        id: id,
+        title: title,
+        image: artUri.toString(),
+        type: "",
+        subtitle: displaySubtitle,
+        permaUrl: "");
   }
 }

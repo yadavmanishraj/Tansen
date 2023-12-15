@@ -77,9 +77,7 @@ class HomeView extends StatelessWidget {
           );
         } else {
           final data = state.data?.entries;
-          return Scaffold(
-            body: HomeDataView(data: data),
-          );
+          return HomeDataView(data: data);
         }
       },
     );
@@ -130,7 +128,6 @@ class _HomeDataViewState extends State<HomeDataView> {
   @override
   Widget build(BuildContext context) {
     final colorscheme = Theme.of(context).colorScheme;
-
     return GradientMesh(
       scrollController: scrollController,
       // decoration: BoxDecoration(
@@ -344,6 +341,7 @@ class GradientMesh extends StatelessWidget {
           scrollController: scrollController,
         ),
         SafeArea(
+          bottom: false,
           child: child,
         )
       ],
@@ -544,11 +542,16 @@ class _CategoryBarState extends State<CategoryBar> {
             stream: streamController.stream,
             initialData: 0,
             builder: (context, snapshot) {
-              return ColoredBox(
-                color: Theme.of(context)
+              final opacity = calculateOpacity(snapshot.data!);
+              final dividerOpacity = opacity >= .3 ? .3 : opacity;
+
+              return DecoratedBox(
+                decoration: BoxDecoration(
+                    border: Border(bottom: BorderSide(width: 1, color: Theme.of(context).colorScheme.outline.withOpacity( dividerOpacity))),
+                    color: Theme.of(context)
                     .colorScheme
                     .background
-                    .withOpacity(calculateOpacity(snapshot.data!)),
+                    .withOpacity(opacity)),
                 child: const Padding(
                   padding: EdgeInsets.symmetric(vertical: 18),
                   child: Row(

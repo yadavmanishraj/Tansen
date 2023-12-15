@@ -8,10 +8,14 @@ import 'package:muisc_repository/muisc_repository.dart';
 import 'package:tansen/main.dart';
 import 'package:tansen/src/features/home/view/context_dialog.dart';
 import 'package:tansen/src/features/player/bloc/music_player_bloc.dart';
+import 'package:tansen/src/features/player/view/loop_mode.dart';
 import 'package:tansen/src/features/player/view/music_progress_bar.dart';
 import 'package:tansen/src/features/player/view/play_pause_button.dart';
 import 'package:tansen/src/features/player/view/player_carasaul.dart';
 import 'package:tansen/src/features/player/view/player_progress_view.dart';
+import 'package:tansen/src/features/player/view/shuffle_mode.dart';
+import 'package:tansen/src/features/player/view/timer.dart';
+import 'package:tansen/src/features/player/view/timer_bottomsheet.dart';
 import 'package:tansen/src/widgets/details_page.dart';
 
 class MaxPlayer extends StatelessWidget {
@@ -29,64 +33,59 @@ class MaxPlayer extends StatelessWidget {
             child: const PlayerBackgroundImage(),
           ),
         ),
-        BlocBuilder<MusicPlayerBloc, MusicPlayerState>(
-          buildWhen: (previous, current) => false,
-          builder: (context, state) {
-            return Column(
-              children: [
-                const SizedBox(height: 32),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Row(
+        Column(
+          children: [
+            const SizedBox(height: 32),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Row(
+                children: [
+                  IconButton(
+                      onPressed: context.pop,
+                      icon: const Icon(Icons.expand_more)),
+                  Expanded(
+                      child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       IconButton(
-                          onPressed: context.pop,
-                          icon: const Icon(Icons.expand_more)),
-                      Expanded(
-                          child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          IconButton(
-                              onPressed: () {}, icon: const Icon(Icons.cast)),
-                          IconButton(
-                              onPressed: () {
-                                showContextDialog(context, state.nowPlaying!);
-                              },
-                              icon: const Icon(Icons.more_vert))
-                        ],
-                      ))
+                          onPressed: () {}, icon: const Icon(Icons.cast)),
+                      IconButton(
+                          onPressed: () {
+                            // showContextDialog(context, state.data!);
+                          },
+                          icon: const Icon(Icons.more_vert))
                     ],
-                  ),
-                ),
-                const SizedBox(height: 8),
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 16),
-                  child: SizedBox(
-                    height: 350,
-                    child: PlayerCarasaul(),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 32.0, vertical: 16),
-                  child: NowPlayingText(),
-                ),
-                const SizedBox(height: 16),
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 16),
-                  child: MusicPorgressBar(),
-                ),
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 32.0),
-                  child: PlayerControls(),
-                ),
-                const Expanded(child: SizedBox()),
-                const PlayerControlsExtra(),
-                SizedBox(height: MediaQuery.of(context).viewPadding.bottom)
-              ],
-            );
-          },
-        ),
+                  ))
+                ],
+              ),
+            ),
+            const SizedBox(height: 8),
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 16),
+              child: SizedBox(
+                height: 350,
+                child: PlayerCarasaul(),
+              ),
+            ),
+            const SizedBox(height: 16),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 32.0, vertical: 16),
+              child: NowPlayingText(),
+            ),
+            const SizedBox(height: 16),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 16),
+              child: MusicPorgressBar(),
+            ),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 24.0),
+              child: PlayerControls(),
+            ),
+            const Expanded(child: SizedBox()),
+            const PlayerControlsExtra(),
+            SizedBox(height: MediaQuery.of(context).viewPadding.bottom)
+          ],
+        )
       ],
     );
   }
@@ -97,7 +96,8 @@ class NowPlayingText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<MusicPlayerBloc, MusicPlayerState>(
+    return StreamBuilder(
+      stream: context.read<MusicPlayerBloc>().nowPlaying,
       builder: (context, state) {
         return Row(
           children: [
@@ -106,14 +106,14 @@ class NowPlayingText extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    state.nowPlaying?.title ?? "Not Avialable",
+                    state.data?.title ?? "Not Avialable",
                     overflow: TextOverflow.ellipsis,
                     maxLines: 1,
                     style: const TextStyle(
                         fontSize: 24, fontWeight: FontWeight.bold),
                   ),
                   Text(
-                    state.nowPlaying?.subtitle ?? "Not Avialable",
+                    state.data?.subtitle ?? "Not Avialable",
                     overflow: TextOverflow.ellipsis,
                     maxLines: 1,
                     style: const TextStyle(fontSize: 16),
@@ -167,8 +167,7 @@ class PlayerControlsExtra extends StatelessWidget {
               Icons.lyrics_outlined,
               color: Colors.grey,
             )),
-        const IconButton(
-            onPressed: null, icon: Icon(Icons.timer_outlined, size: 32)),
+        const TimerIconButton(),
         IconButton(
             onPressed: () {
               showModalBottomSheet(
@@ -201,8 +200,7 @@ class PlayerControls extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        IconButton(
-            onPressed: () {}, icon: const Icon(Icons.shuffle), iconSize: 32),
+        const ShuffleModeButton(),
         IconButton(
             onPressed: context.read<MusicPlayerBloc>().seekprevious,
             icon: const Icon(Icons.skip_previous),
@@ -211,11 +209,11 @@ class PlayerControls extends StatelessWidget {
           size: 44,
         ),
         IconButton(
-            onPressed: context.read<MusicPlayerBloc>().seekNext,
-            icon: const Icon(Icons.skip_next),
-            iconSize: 38),
-        IconButton(
-            onPressed: () {}, icon: const Icon(Icons.repeat), iconSize: 32)
+          onPressed: context.read<MusicPlayerBloc>().seekNext,
+          icon: const Icon(Icons.skip_next),
+          iconSize: 38,
+        ),
+        const LoopModeButton()
       ],
     );
   }

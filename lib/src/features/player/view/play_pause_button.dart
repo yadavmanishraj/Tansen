@@ -15,69 +15,80 @@ class PlayPauseButton extends StatelessWidget {
       color: Theme.of(context).colorScheme.primaryContainer,
       child: Padding(
         padding: const EdgeInsets.all(4.0),
-        child: BlocBuilder<MusicPlayerBloc, MusicPlayerState>(
+        child: StreamBuilder<PlayerState>(
+            stream: context.read<MusicPlayerBloc>().processingStateStream,
+            initialData: PlayerState(false, ProcessingState.idle),
             builder: (context, state) {
-          if (state.state.playing &&
-              state.state.processingState == ProcessingState.ready) {
-            return IconButton(
-                iconSize: size,
-                onPressed: () {
-                  context.read<MusicPlayerBloc>().add(MusicPlayerEventPause());
-                },
-                icon: const Icon(Icons.pause));
-          } else if (!state.state.playing &&
-                  state.state.processingState == ProcessingState.ready ||
-              state.state.processingState == ProcessingState.idle) {
-            return IconButton(
-                iconSize: size,
-                onPressed: () {
-                  context.read<MusicPlayerBloc>().add(MusicPlayerEventPlay());
-                },
-                icon: const Icon(Icons.play_arrow));
-          } else if ((state.state.playing &&
-                  state.state.processingState == ProcessingState.loading) ||
-              (!state.state.playing &&
-                      state.state.processingState == ProcessingState.loading ||
-                  state.state.processingState == ProcessingState.buffering)) {
-            return Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: SizedBox(
+              final playerState = state.data!;
+
+              if (state.data!.playing &&
+                  playerState.processingState == ProcessingState.ready) {
+                return IconButton(
+                    iconSize: size,
+                    onPressed: () {
+                      context
+                          .read<MusicPlayerBloc>()
+                          .add(MusicPlayerEventPause());
+                    },
+                    icon: const Icon(Icons.pause));
+              } else if (!playerState.playing &&
+                      playerState.processingState == ProcessingState.ready ||
+                  playerState.processingState == ProcessingState.idle) {
+                return IconButton(
+                    iconSize: size,
+                    onPressed: () {
+                      context
+                          .read<MusicPlayerBloc>()
+                          .add(MusicPlayerEventPlay());
+                    },
+                    icon: const Icon(Icons.play_arrow));
+              } else if ((playerState.playing &&
+                      playerState.processingState == ProcessingState.loading) ||
+                  (!playerState.playing &&
+                          playerState.processingState ==
+                              ProcessingState.loading ||
+                      playerState.processingState ==
+                          ProcessingState.buffering)) {
+                return Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: SizedBox(
+                    height: size,
+                    width: size,
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        IconButton(
+                            // iconSize: 32,
+                            onPressed: () {
+                              context
+                                  .read<MusicPlayerBloc>()
+                                  .add(MusicPlayerEventPause());
+                            },
+                            icon: const Icon(Icons.pause)),
+                        const CircularProgressIndicator(strokeWidth: 2)
+                      ],
+                    ),
+                  ),
+                );
+              } else if (playerState.processingState ==
+                  ProcessingState.completed) {
+                return IconButton(
+                    iconSize: size,
+                    onPressed: () {
+                      context
+                          .read<MusicPlayerBloc>()
+                          .add(const MusicPlayerStateSeekIndex(index: 0));
+                    },
+                    icon: const Icon(Icons.refresh));
+              }
+              return SizedBox(
                 height: size,
                 width: size,
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    IconButton(
-                        // iconSize: 32,
-                        onPressed: () {
-                          context
-                              .read<MusicPlayerBloc>()
-                              .add(MusicPlayerEventPause());
-                        },
-                        icon: const Icon(Icons.pause)),
-                    const CircularProgressIndicator(strokeWidth: 2)
-                  ],
+                child: const CircularProgressIndicator(
+                  strokeWidth: 2,
                 ),
-              ),
-            );
-          } else if (state.state.processingState == ProcessingState.completed) {
-            return IconButton(
-                iconSize: size,
-                onPressed: () {
-                  context
-                      .read<MusicPlayerBloc>()
-                      .add(const MusicPlayerStateSeekIndex(index: 0));
-                },
-                icon: const Icon(Icons.refresh));
-          }
-          return SizedBox(
-            height: size,
-            width: size,
-            child: const CircularProgressIndicator(
-              strokeWidth: 2,
-            ),
-          );
-        }),
+              );
+            }),
       ),
     );
   }

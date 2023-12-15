@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
@@ -18,8 +19,12 @@ setupAudioServices() async {
 
 extension on MediaItem {
   AudioSource get audioSource {
-    return ProgressiveAudioSource(Uri.parse(extras!['url']));
+    return ProgressiveAudioSource(Uri.parse(extras!['url']), tag: "");
   }
+}
+
+extension on List<MediaItem> {
+  List<AudioSource> get audioSources => map((e) => e.audioSource).toList();
 }
 
 class AppAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
@@ -28,9 +33,42 @@ class AppAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   AudioPlayer get audioPlayer => _audioPlayer;
   final _playlist = ConcatenatingAudioSource(children: []);
 
+  final _mediaQueueIndexed = BehaviorSubject.seeded(CurrentItemQueue());
+
   AppAudioHandler() {
     _audioPlayer = AudioPlayer();
     init();
+  }
+
+  Future<void> setTimer() async {}
+
+  Future<void> _startIndexedQueItemDrama() async {
+    Rx.combineLatest2(queue, _audioPlayer.currentIndexStream, (queue, index) {
+      return (CurrentItemQueue(queue: queue, index: index ?? 0));
+    }).pipe(_mediaQueueIndexed);
+  }
+
+  @override
+  Future<void> addQueueItem(MediaItem mediaItem) async {
+    super.addQueueItem(mediaItem);
+    _playlist.add(mediaItem.audioSource);
+  }
+
+  @override
+  Future<void> addQueueItems(List<MediaItem> mediaItems) async {
+    super.addQueueItems(mediaItems);
+    _playlist.addAll(mediaItems.audioSources);
+  }
+
+  //TODO Implement this
+  @override
+  Future<void> removeQueueItem(MediaItem mediaItem) async {}
+
+  @override
+  Future<void> removeQueueItemAt(int index) async {
+    queue.value.removeAt(index);
+    _playlist.removeAt(index);
+    queue.add(queue.value);
   }
 
   @override
@@ -50,6 +88,9 @@ class AppAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
     playbackState.add(playbackState.value.copyWith(repeatMode: repeatMode));
     _audioPlayer.setLoopMode(LoopMode.values[repeatMode.index]);
   }
+
+  Stream<LoopMode> get loopMode => _audioPlayer.loopModeStream;
+  Stream<bool> get shuffleMode => _audioPlayer.shuffleModeEnabledStream;
 
   init() {
     _audioPlayer.setAudioSource(_playlist, preload: false);
@@ -155,29 +196,39 @@ class AppAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
           _audioPlayer.playing;
 
       playbackState.add(playbackState.value.copyWith(
-        controls: [
-          MediaControl.skipToPrevious,
-          if (playing) MediaControl.pause else MediaControl.play,
-          MediaControl.skipToNext,
-        ],
-        systemActions: {MediaAction.seek},
-        androidCompactActionIndices: [0, 1, 2],
-        processingState: const {
-          ProcessingState.idle: AudioProcessingState.idle,
-          ProcessingState.loading: AudioProcessingState.loading,
-          ProcessingState.buffering: AudioProcessingState.buffering,
-          ProcessingState.ready: AudioProcessingState.ready,
-          ProcessingState.completed: AudioProcessingState.completed,
-        }[_audioPlayer.processingState]!,
-        playing: playing,
-        updatePosition: _audioPlayer.position,
-        bufferedPosition: _audioPlayer.bufferedPosition,
-        speed: _audioPlayer.speed,
-        queueIndex: event.currentIndex,
-        repeatMode: AudioServiceRepeatMode.all
-      ));
+          controls: [
+            MediaControl.skipToPrevious,
+            if (playing) MediaControl.pause else MediaControl.play,
+            MediaControl.skipToNext,
+          ],
+          systemActions: {
+            MediaAction.seek,
+            MediaAction.setRating,
+            MediaAction.setRepeatMode
+          },
+          androidCompactActionIndices: [
+            0,
+            1,
+            2
+          ],
+          processingState: const {
+            ProcessingState.idle: AudioProcessingState.idle,
+            ProcessingState.loading: AudioProcessingState.loading,
+            ProcessingState.buffering: AudioProcessingState.buffering,
+            ProcessingState.ready: AudioProcessingState.ready,
+            ProcessingState.completed: AudioProcessingState.completed,
+          }[_audioPlayer.processingState]!,
+          playing: playing,
+          updatePosition: _audioPlayer.position,
+          bufferedPosition: _audioPlayer.bufferedPosition,
+          speed: _audioPlayer.speed,
+          queueIndex: event.currentIndex,
+          repeatMode: AudioServiceRepeatMode.all));
     });
   }
+
+  Stream<int> get currentIndex =>
+      _audioPlayer.currentIndexStream.map((event) => event ?? 0);
 
   Stream<String> progressDuration() {
     return _audioPlayer.positionStream.map((event) => transfrom(event));
@@ -206,4 +257,13 @@ class AppAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
       return "$duration";
     }
   }
+}
+
+class CurrentItemQueue {
+  List<MediaItem> queue;
+  int index;
+  CurrentItemQueue({
+    this.queue = const [],
+    this.index = 0,
+  });
 }

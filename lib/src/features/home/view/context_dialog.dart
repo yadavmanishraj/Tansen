@@ -10,176 +10,172 @@ showContextDialog(BuildContext context, BaseModel model) {
     context: context,
     useRootNavigator: true,
     isScrollControlled: true,
-    backgroundColor: Colors.transparent,
-    builder: (context) => ClipRRect(
-      borderRadius: BorderRadius.circular(8),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 70, sigmaY: 70),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              contentPadding: const EdgeInsets.only(left: 16, right: 8),
-              leading: SizedBox(
-                height: 48,
-                child: RoundedBox(
-                  child: CachedNetworkImage(
-                    imageUrl: model.veryHigh!,
-                  ),
-                ),
-              ),
-              title: Text(
-                model.title ?? "Not Avialable",
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-              subtitle: Text(
-                model.subText,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-              trailing: IconButton(
-                icon: const Icon(
-                  Icons.favorite,
-                  color: Colors.pink,
-                ),
-                onPressed: () {},
+    shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(8))),
+    // backgroundColor: Colors.transparent,
+    builder: (context) => Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        ListTile(
+          contentPadding: const EdgeInsets.only(left: 16, right: 8),
+          leading: SizedBox(
+            height: 48,
+            child: RoundedBox(
+              child: CachedNetworkImage(
+                imageUrl: model.veryHigh!,
               ),
             ),
-            const Divider(
-              indent: 0,
-              height: 0,
-              endIndent: 0,
+          ),
+          title: Text(
+            model.title ?? "Not Avialable",
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+          subtitle: Text(
+            model.subText,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+          trailing: IconButton(
+            icon: const Icon(
+              Icons.favorite,
+              color: Colors.pink,
             ),
-            // Material(
-            //   color: Colors.transparent,
-            //   shadowColor: Colors.transparent,
-            //   surfaceTintColor: Colors.transparent,
-            //   child: ListTile(
-            //     onTap: () {},
-            //     leading: Icon(Icons.shuffle),
-            //     title: Text("Shuffle Play"),
-            //   ),
-            // ),
-            Material(
-              color: Colors.transparent,
-              shadowColor: Colors.transparent,
-              surfaceTintColor: Colors.transparent,
-              child: ListTile(
-                onTap: () {},
-                leading: Icon(Icons.playlist_play),
-                title: Text("Play next"),
-              ),
-            ),
-            Material(
-              color: Colors.transparent,
-              shadowColor: Colors.transparent,
-              surfaceTintColor: Colors.transparent,
-              child: ListTile(
-                onTap: () {},
-                leading: Icon(Icons.queue_music),
-                title: Text("Add to queue"),
-              ),
-            ),
-            Material(
-              color: Colors.transparent,
-              shadowColor: Colors.transparent,
-              surfaceTintColor: Colors.transparent,
-              child: ListTile(
-                onTap: () {},
-                leading: Icon(Icons.library_add_outlined),
-                title: Text("Save to library"),
-              ),
-            ),
-            Material(
-              color: Colors.transparent,
-              shadowColor: Colors.transparent,
-              surfaceTintColor: Colors.transparent,
-              child: ListTile(
-                onTap: () {},
-                leading: Icon(Icons.file_download_outlined),
-                title: Text(
-                  "Download",
-                ),
-                trailing: PremiumChip(),
-              ),
-            ),
-            Material(
-              color: Colors.transparent,
-              shadowColor: Colors.transparent,
-              surfaceTintColor: Colors.transparent,
-              child: ListTile(
-                onTap: () {},
-                leading: Icon(Icons.playlist_add),
-                title: Text("Save to playlist"),
-              ),
-            ),
-            Material(
-              color: Colors.transparent,
-              shadowColor: Colors.transparent,
-              surfaceTintColor: Colors.transparent,
-              child: ListTile(
-                onTap: () {},
-                leading: Icon(Icons.album_outlined),
-                title: Text("Go to album"),
-              ),
-            ),
-            Material(
-              color: Colors.transparent,
-              shadowColor: Colors.transparent,
-              surfaceTintColor: Colors.transparent,
-              child: ListTile(
-                onTap: () {},
-                leading: Icon(Icons.person_outline),
-                title: Text("Go to artist"),
-              ),
-            ),
-            // Material(
-            //   color: Colors.transparent,
-            //   shadowColor: Colors.transparent,
-            //   surfaceTintColor: Colors.transparent,
-            //   child: ListTile(
-            //     onTap: () {},
-            //     leading: Icon(Icons.bookmark_outline),
-            //     title: Text("Save episode for later"),
-            //   ),
-            // ),
-            // Material(
-            //   color: Colors.transparent,
-            //   shadowColor: Colors.transparent,
-            //   surfaceTintColor: Colors.transparent,
-            //   child: ListTile(
-            //     onTap: () {},
-            //     leading: Icon(Icons.info_outline),
-            //     title: Text("Go to episode"),
-            //   ),
-            // ),
-            Material(
-              color: Colors.transparent,
-              shadowColor: Colors.transparent,
-              surfaceTintColor: Colors.transparent,
-              child: ListTile(
-                onTap: () {},
-                leading: Icon(Icons.groups_3_outlined),
-                title: Text("View song credits"),
-              ),
-            ),
-            Material(
-              color: Colors.transparent,
-              shadowColor: Colors.transparent,
-              surfaceTintColor: Colors.transparent,
-              child: ListTile(
-                onTap: () {},
-                leading: Icon(Icons.share),
-                title: Text("Share"),
-              ),
-            ),
-            SizedBox(
-              height: MediaQuery.of(context).viewPadding.bottom,
-            )
-          ],
+            onPressed: () {},
+          ),
         ),
-      ),
+        const Divider(
+          indent: 0,
+          height: 0,
+          endIndent: 0,
+        ),
+        // Material(
+        //   color: Colors.transparent,
+        //   shadowColor: Colors.transparent,
+        //   surfaceTintColor: Colors.transparent,
+        //   child: ListTile(
+        //     onTap: () {},
+        //     leading: Icon(Icons.shuffle),
+        //     title: Text("Shuffle Play"),
+        //   ),
+        // ),
+        Material(
+          color: Colors.transparent,
+          shadowColor: Colors.transparent,
+          surfaceTintColor: Colors.transparent,
+          child: ListTile(
+            onTap: () {},
+            leading: Icon(Icons.playlist_play),
+            title: Text("Play next"),
+          ),
+        ),
+        Material(
+          color: Colors.transparent,
+          shadowColor: Colors.transparent,
+          surfaceTintColor: Colors.transparent,
+          child: ListTile(
+            onTap: () {},
+            leading: Icon(Icons.queue_music),
+            title: Text("Add to queue"),
+          ),
+        ),
+        Material(
+          color: Colors.transparent,
+          shadowColor: Colors.transparent,
+          surfaceTintColor: Colors.transparent,
+          child: ListTile(
+            onTap: () {},
+            leading: Icon(Icons.library_add_outlined),
+            title: Text("Save to library"),
+          ),
+        ),
+        Material(
+          color: Colors.transparent,
+          shadowColor: Colors.transparent,
+          surfaceTintColor: Colors.transparent,
+          child: ListTile(
+            onTap: () {},
+            leading: Icon(Icons.file_download_outlined),
+            title: Text(
+              "Download",
+            ),
+            trailing: PremiumChip(),
+          ),
+        ),
+        Material(
+          color: Colors.transparent,
+          shadowColor: Colors.transparent,
+          surfaceTintColor: Colors.transparent,
+          child: ListTile(
+            onTap: () {},
+            leading: Icon(Icons.playlist_add),
+            title: Text("Save to playlist"),
+          ),
+        ),
+        Material(
+          color: Colors.transparent,
+          shadowColor: Colors.transparent,
+          surfaceTintColor: Colors.transparent,
+          child: ListTile(
+            onTap: () {},
+            leading: Icon(Icons.album_outlined),
+            title: Text("Go to album"),
+          ),
+        ),
+        Material(
+          color: Colors.transparent,
+          shadowColor: Colors.transparent,
+          surfaceTintColor: Colors.transparent,
+          child: ListTile(
+            onTap: () {},
+            leading: Icon(Icons.person_outline),
+            title: Text("Go to artist"),
+          ),
+        ),
+        // Material(
+        //   color: Colors.transparent,
+        //   shadowColor: Colors.transparent,
+        //   surfaceTintColor: Colors.transparent,
+        //   child: ListTile(
+        //     onTap: () {},
+        //     leading: Icon(Icons.bookmark_outline),
+        //     title: Text("Save episode for later"),
+        //   ),
+        // ),
+        // Material(
+        //   color: Colors.transparent,
+        //   shadowColor: Colors.transparent,
+        //   surfaceTintColor: Colors.transparent,
+        //   child: ListTile(
+        //     onTap: () {},
+        //     leading: Icon(Icons.info_outline),
+        //     title: Text("Go to episode"),
+        //   ),
+        // ),
+        Material(
+          color: Colors.transparent,
+          shadowColor: Colors.transparent,
+          surfaceTintColor: Colors.transparent,
+          child: ListTile(
+            onTap: () {},
+            leading: Icon(Icons.groups_3_outlined),
+            title: Text("View song credits"),
+          ),
+        ),
+        Material(
+          color: Colors.transparent,
+          shadowColor: Colors.transparent,
+          surfaceTintColor: Colors.transparent,
+          child: ListTile(
+            onTap: () {},
+            leading: Icon(Icons.share),
+            title: Text("Share"),
+          ),
+        ),
+        SizedBox(
+          height: MediaQuery.of(context).viewPadding.bottom,
+        )
+      ],
     ),
   );
 }

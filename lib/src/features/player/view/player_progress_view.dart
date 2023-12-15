@@ -10,13 +10,15 @@ class PlayerProgressView extends StatelessWidget {
     return BlocBuilder<MusicPlayerBloc, MusicPlayerState>(
       buildWhen: (previous, current) => previous.progress != current.progress,
       builder: (context, state) {
+        if (state.nowPlaying == null) return const SizedBox();
         return StreamBuilder<double>(
           stream: state.progress,
           initialData: 0,
           builder: (context, state) {
             return LinearProgressIndicator(
+              backgroundColor: Colors.transparent,
               value: state.data?.toDouble() ?? 0,
-              minHeight: 2,
+              minHeight: 1,
             );
           },
         );

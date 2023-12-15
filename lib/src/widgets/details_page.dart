@@ -19,7 +19,7 @@ class ThemedSubTree extends StatefulWidget {
   const ThemedSubTree(
       {super.key, required this.imageProvider, required this.child});
   final Widget child;
-  final ImageProvider imageProvider;
+  final ImageProvider? imageProvider;
 
   @override
   State<ThemedSubTree> createState() => _ThemedSubTreeState();
@@ -38,7 +38,8 @@ class _ThemedSubTreeState extends State<ThemedSubTree> {
     super.didChangeDependencies();
     colorScheme = ColorScheme.fromImageProvider(
         brightness: Theme.of(context).brightness,
-        provider: widget.imageProvider);
+        provider:
+            widget.imageProvider ?? const AssetImage("assets/icons/app.png"));
   }
 
   @override
@@ -47,7 +48,7 @@ class _ThemedSubTreeState extends State<ThemedSubTree> {
         future: colorScheme,
         builder: (context, snapshot) {
           return AnimatedTheme(
-              duration: const Duration(milliseconds: 100),
+              duration: const Duration(milliseconds: 500),
               curve: Curves.bounceIn,
               data: Theme.of(context).copyWith(colorScheme: snapshot.data),
               child: widget.child);

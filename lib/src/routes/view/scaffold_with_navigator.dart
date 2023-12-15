@@ -54,44 +54,51 @@ class _ScaffoldWithNavigatorState extends State<ScaffoldWithNavigator> {
     return Scaffold(
       body: widget.state,
       extendBody: true,
-      bottomNavigationBar: ClipRect(
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 100, sigmaY: 100),
-          child: ColoredBox(
-            color: colorScheme.surface.withOpacity(.1),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const MiniPlayerWidget(),
-                PlayerProgressView(),
-                SizedBox(height: 16),
-                NavigationBar(
-                  elevation: 0,
-                  backgroundColor: Colors.transparent,
-                  surfaceTintColor: Colors.transparent,
-                  selectedIndex: widget.state.currentIndex,
-                  onDestinationSelected: (value) {
-                    widget.state.goBranch(value, initialLocation: value == 0);
-                    setState(() {});
-                  },
-                  height: 50,
-                  destinations: const [
-                    NavigationDestination(
-                        icon: Icon(Icons.home_outlined),
-                        selectedIcon: Icon(Icons.home_filled),
-                        label: "Home"),
-                    NavigationDestination(
-                        icon: Icon(Icons.explore_outlined),
-                        selectedIcon: Icon(Icons.explore),
-                        label: "Explore"),
-                    NavigationDestination(
-                        icon: Icon(Icons.library_music_outlined),
-                        selectedIcon: Icon(Icons.library_music),
-                        label: "Library"),
-                  ],
-                ),
-                // const SizedBox(height: 8),
-              ],
+      bottomNavigationBar: Material(
+        elevation: 10,
+        color: Colors.transparent,
+        // shadowColor: Colors.transparent,
+        surfaceTintColor: Colors.transparent,
+        child: ClipRect(
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 50, sigmaY: 50),
+            child: ColoredBox(
+              color: Theme.of(context).colorScheme.background.withOpacity(.4),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const MiniPlayerWidget(),
+                  PlayerProgressView(),
+                  SizedBox(height: 16),
+                  NavigationBar(
+                    elevation: 0,
+                    backgroundColor: Colors.transparent,
+                    surfaceTintColor: Colors.transparent,
+                    shadowColor: Colors.transparent,
+                    selectedIndex: widget.state.currentIndex,
+                    onDestinationSelected: (value) {
+                      widget.state.goBranch(value, initialLocation: value == widget.state.currentIndex);
+                      setState(() {});
+                    },
+                    height: 50,
+                    destinations: const [
+                      NavigationDestination(
+                          icon: Icon(Icons.home_outlined),
+                          selectedIcon: Icon(Icons.home_filled),
+                          label: "Home"),
+                      NavigationDestination(
+                          icon: Icon(Icons.explore_outlined),
+                          selectedIcon: Icon(Icons.explore),
+                          label: "Explore"),
+                      NavigationDestination(
+                          icon: Icon(Icons.library_music_outlined),
+                          selectedIcon: Icon(Icons.library_music),
+                          label: "Library"),
+                    ],
+                  ),
+                  // const SizedBox(height: 8),
+                ],
+              ),
             ),
           ),
         ),
