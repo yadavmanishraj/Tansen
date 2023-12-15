@@ -3,6 +3,8 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
+  firebase_core
+  firebase_storage
   isar_flutter_libs
   just_audio_windows
 )

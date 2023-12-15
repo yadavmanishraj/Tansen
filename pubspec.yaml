@@ -57,6 +57,8 @@ dependencies:
   # google_mobile_ads: ^4.0.0
   flutter_cache_manager: ^3.3.1
   async: ^2.11.0
+  firebase_core: ^2.24.2
+  firebase_storage: ^11.5.6
 
 dev_dependencies:
   flutter_test:
