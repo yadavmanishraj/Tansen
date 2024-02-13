@@ -7,6 +7,7 @@ import 'package:jiosaavn_api/src/models/album.dart';
 import 'package:jiosaavn_api/src/models/album_details.dart';
 import 'package:jiosaavn_api/src/models/playlist.dart';
 import 'package:jiosaavn_api/src/models/search_model.dart';
+import 'package:jiosaavn_api/src/utils/format.dart';
 
 import 'endpoints.dart';
 import 'models/models.dart';
@@ -63,7 +64,7 @@ class JioSaavnApi {
       }
 
       final jsonBody =
-          await Isolate.run(() => jsonDecode(response.body)) as Map;
+          await Isolate.run(() => jsonDecode(replaceEntity(response.body))) as Map;
       return jsonBody;
     } catch (e) {
       throw Exception("Someting Went Wrong $e");
@@ -164,7 +165,7 @@ class JioSaavnApi {
             {...params, "__call": Endpoints.search, "query": query}),
         headers: headers);
 
-    final jsonResponse = jsonDecode(response.body) as Map;
+    final jsonResponse = jsonDecode(replaceEntity(response.body)) as Map;
     print(jsonResponse);
     return jsonResponse
         .map((key, value) => MapEntry(key, SearchModel.fromJson(value)));
