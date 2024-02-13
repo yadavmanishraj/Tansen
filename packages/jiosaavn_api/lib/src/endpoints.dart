@@ -75,4 +75,5 @@ class Endpoints {
   static const topPodcasts = "content.getTopShows";
   static const topArtists = "social.getTopArtists";
   static const search = "autocomplete.get";
+  static const featuredChannels = "channel.getDetails";
 }

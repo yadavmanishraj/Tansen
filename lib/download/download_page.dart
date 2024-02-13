@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:logger/logger.dart';
@@ -10,6 +11,7 @@ import 'package:tansen/download/download_progress.dart';
 import 'package:tansen/src/features/player/bloc/music_player_bloc.dart';
 import 'package:tansen/src/widgets/art_display.dart';
 import 'package:tansen/src/widgets/basics.dart';
+import 'package:tansen/src/widgets/details_page.dart';
 
 class DownloadPage extends StatelessWidget {
   const DownloadPage({super.key});
@@ -40,7 +42,7 @@ class DownloadView extends StatelessWidget {
                   padding: EdgeInsets.symmetric(horizontal: 16.0),
                   child: Text(
                     "Downloads",
-                    style: TextStyle(fontSize: 32),
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                   ),
                 ),
                 SizedBox(height: 16),
@@ -64,26 +66,40 @@ class DownloadGrid extends StatelessWidget {
       itemCount: collections.length,
       padding: const EdgeInsets.symmetric(horizontal: 16),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        childAspectRatio: 215 / 260,
-        // mainAxisSpacing: 16,
-        // crossAxisSpacing: 16,
-      ),
+          crossAxisCount: 2,
+          childAspectRatio: 167.33 / 205,
+          mainAxisSpacing: 8,
+          crossAxisSpacing: 8
+          // mainAxisSpacing: 16,
+          // crossAxisSpacing: 16,
+          ),
       itemBuilder: (context, index) => InkWell(
         onTap: () async {
           // context.read<MusicPlayerBloc>().add(
           //     MusicPlayerAddEvent(baseModel: collections.elementAt(index)));
-          context.push(
-            "/details",
-            extra: Future.value(DetailsModel(
-                baseModel: collections[index],
-                mainDetails: await context
-                    .read<DownloadBloc>()
-                    .getSongs(collections[index]))),
-          );
+
+          Future.value(DetailsModel(
+                  baseModel: collections[index],
+                  mainDetails: await context
+                      .read<DownloadBloc>()
+                      .getSongs(collections[index])))
+              .then((value) {
+            Navigator.push(
+                context,
+                CupertinoPageRoute(
+                    builder: (context) => PlaylistDetailsPage(
+                          albumDetails: Future.value(value),
+                          isOnline: false,
+                        )));
+          });
+
+          // context.push(
+          //   "/details",
+          //   extra: ),
+          // );
         },
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             SizedBox(
               height: 167.33,
@@ -94,34 +110,39 @@ class DownloadGrid extends StatelessWidget {
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 4.0),
-              child: Text(
-                collections.elementAt(index).title!,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                    height: 1, fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-            ),
-            Row(
+            Column(
               children: [
-                const Icon(Icons.check_circle, size: 16, color: Colors.grey),
-                const SizedBox(width: 4),
-                Expanded(
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 4.0),
                   child: Text(
-                    collections.elementAt(index).subText,
+                    collections.elementAt(index).title!,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                        color: Theme.of(context)
-                            .colorScheme
-                            .onSurface
-                            .withOpacity(.5)),
+                    style: const TextStyle(
+                        height: 1, fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                 ),
+                Row(
+                  children: [
+                    const Icon(Icons.check_circle,
+                        size: 16, color: Colors.grey),
+                    const SizedBox(width: 4),
+                    Expanded(
+                      child: Text(
+                        collections.elementAt(index).subText,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onSurface
+                                .withOpacity(.5)),
+                      ),
+                    ),
+                  ],
+                ),
               ],
-            ),
+            )
           ],
         ),
       ),

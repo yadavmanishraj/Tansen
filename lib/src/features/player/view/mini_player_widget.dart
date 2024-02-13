@@ -57,7 +57,9 @@ class _MiniPlayerWidgetState extends State<MiniPlayerWidget> {
         system = true;
       },
       listenWhen: (previous, current) =>
-          previous.nowPlaying != current.nowPlaying,
+          previous.nowPlaying?.id != current.nowPlaying?.id,
+      buildWhen: (previous, current) =>
+          previous.nowPlaying?.id != current.nowPlaying?.id,
       builder: (context, state) {
         if (state.nowPlaying == null) {
           return const SizedBox.shrink();

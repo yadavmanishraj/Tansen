@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "309983931368",
+    "project_id": "tansen-music-418e5",
+    "storage_bucket": "tansen-music-418e5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:309983931368:android:5e62bf076ae1045f6c125d",
+        "android_client_info": {
+          "package_name": "tansen.music.tansen"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBFdh9I5monT3NIbZP2fcKnxI1GVBz2bzI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
