@@ -3,10 +3,6 @@ import 'dart:io';
 import 'dart:isolate';
 
 import 'package:http/http.dart' as http;
-import 'package:jiosaavn_api/src/models/album.dart';
-import 'package:jiosaavn_api/src/models/album_details.dart';
-import 'package:jiosaavn_api/src/models/playlist.dart';
-import 'package:jiosaavn_api/src/models/search_model.dart';
 import 'package:jiosaavn_api/src/utils/format.dart';
 
 import 'endpoints.dart';

@@ -1,8 +1,5 @@
 import 'dart:async';
 
-import 'package:async/async.dart';
-import 'package:flutter/animation.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:rxdart/rxdart.dart';
 

@@ -15,9 +15,9 @@ class MusicPorgressBar extends StatelessWidget {
           data: SliderThemeData(
               trackHeight: 2,
               inactiveTrackColor: Theme.of(context).colorScheme.inversePrimary,
-              trackShape: RectangularSliderTrackShape(),
-              overlayShape: RoundSliderOverlayShape(overlayRadius: 12),
-              thumbShape: RoundSliderThumbShape(enabledThumbRadius: 6)),
+              trackShape: const RectangularSliderTrackShape(),
+              overlayShape: const RoundSliderOverlayShape(overlayRadius: 12),
+              thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6)),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [

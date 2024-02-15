@@ -61,9 +61,9 @@ class DownloadManager {
   }
 
   init() async {
-    final _tasks = await FlutterDownloader.loadTasks();
+    final tasks = await FlutterDownloader.loadTasks();
 
-    _downloadTaskController.add(_tasks ?? []);
+    _downloadTaskController.add(tasks ?? []);
 
     IsolateNameServer.registerPortWithName(
         _receivePort.sendPort, "download_sendport");
@@ -74,9 +74,9 @@ class DownloadManager {
 
     _tasksStreamContrller.listen(
       (dynamic data) async {
-        final _tasks = await FlutterDownloader.loadTasks();
+        final tasks = await FlutterDownloader.loadTasks();
 
-        _downloadTaskController.add(_tasks ?? []);
+        _downloadTaskController.add(tasks ?? []);
 
         logger.d("There is no no more progress ${data[0]}");
         // final taskId = data[0];

@@ -17,6 +17,7 @@ class Artist extends BaseModel {
   final String? role;
 
   String get name => title;
+  @override
   String get subtitle {
     var char = role!.toLowerCase().codeUnitAt(0) - 32;
     var list = role!.codeUnits.sublist(0, role!.length);

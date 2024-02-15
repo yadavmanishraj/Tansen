@@ -1,8 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:get_it/get_it.dart';
-import 'package:go_router/go_router.dart';
-import 'package:logger/logger.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:muisc_repository/muisc_repository.dart';
@@ -45,7 +42,7 @@ class DownloadView extends StatelessWidget {
                     style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                   ),
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
                 Expanded(child: DownloadGrid(collections: state.baseModels)),
               ],
             );

@@ -37,15 +37,15 @@ class LoopModeButton extends StatelessWidget {
   }
 
   _action(BuildContext context, LoopMode loopMode) {
-    LoopMode _loopMode = LoopMode.off;
+    LoopMode loopMode0 = LoopMode.off;
     if (loopMode == LoopMode.all) {
-      _loopMode = LoopMode.one;
+      loopMode0 = LoopMode.one;
     } else if (loopMode == LoopMode.one) {
-      _loopMode = LoopMode.off;
+      loopMode0 = LoopMode.off;
     } else if (loopMode == LoopMode.off) {
-      _loopMode = LoopMode.all;
+      loopMode0 = LoopMode.all;
     }
 
-    context.read<MusicPlayerBloc>().setLoopMode(_loopMode);
+    context.read<MusicPlayerBloc>().setLoopMode(loopMode0);
   }
 }

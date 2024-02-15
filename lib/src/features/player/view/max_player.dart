@@ -6,17 +6,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:muisc_repository/muisc_repository.dart';
 import 'package:tansen/main.dart';
-import 'package:tansen/src/features/home/view/context_dialog.dart';
 import 'package:tansen/src/features/player/bloc/music_player_bloc.dart';
 import 'package:tansen/src/features/player/view/loop_mode.dart';
 import 'package:tansen/src/features/player/view/music_progress_bar.dart';
 import 'package:tansen/src/features/player/view/play_pause_button.dart';
 import 'package:tansen/src/features/player/view/player_carasaul.dart';
-import 'package:tansen/src/features/player/view/player_progress_view.dart';
 import 'package:tansen/src/features/player/view/shuffle_mode.dart';
 import 'package:tansen/src/features/player/view/timer.dart';
-import 'package:tansen/src/features/player/view/timer_bottomsheet.dart';
-import 'package:tansen/src/widgets/details_page.dart';
 
 class MaxPlayer extends StatelessWidget {
   const MaxPlayer({super.key});

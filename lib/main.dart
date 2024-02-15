@@ -11,7 +11,6 @@ import 'package:tansen/download/download_model.dart';
 import 'package:tansen/download/song_collection.dart';
 import 'package:tansen/download/task_manager.dart';
 import 'package:tansen/inject.dart';
-import 'package:tansen/player_bloc_observer.dart';
 import 'package:tansen/src/features/player/bloc/music_player_bloc.dart';
 import 'package:tansen/src/routes/routes.dart';
 

@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -6,9 +5,7 @@ import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:muisc_repository/muisc_repository.dart';
 import 'package:tansen/src/features/home/view/context_dialog.dart';
-import 'package:tansen/src/features/player/bloc/music_player_bloc.dart';
 import 'package:tansen/src/widgets/basics.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ArtDisplay extends StatefulWidget {
   const ArtDisplay({super.key, required this.baseModel});
@@ -192,6 +189,6 @@ class ViewMoreButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return OutlinedButton(onPressed: () {}, child: Text("More"));
+    return OutlinedButton(onPressed: () {}, child: const Text("More"));
   }
 }

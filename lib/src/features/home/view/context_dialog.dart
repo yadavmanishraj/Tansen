@@ -1,4 +1,3 @@
-import 'dart:ui';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -65,8 +64,8 @@ showContextDialog(BuildContext context, BaseModel model) {
           surfaceTintColor: Colors.transparent,
           child: ListTile(
             onTap: () {},
-            leading: Icon(Icons.playlist_play),
-            title: Text("Play next"),
+            leading: const Icon(Icons.playlist_play),
+            title: const Text("Play next"),
           ),
         ),
         Material(
@@ -75,8 +74,8 @@ showContextDialog(BuildContext context, BaseModel model) {
           surfaceTintColor: Colors.transparent,
           child: ListTile(
             onTap: () {},
-            leading: Icon(Icons.queue_music),
-            title: Text("Add to queue"),
+            leading: const Icon(Icons.queue_music),
+            title: const Text("Add to queue"),
           ),
         ),
         Material(
@@ -85,8 +84,8 @@ showContextDialog(BuildContext context, BaseModel model) {
           surfaceTintColor: Colors.transparent,
           child: ListTile(
             onTap: () {},
-            leading: Icon(Icons.library_add_outlined),
-            title: Text("Save to library"),
+            leading: const Icon(Icons.library_add_outlined),
+            title: const Text("Save to library"),
           ),
         ),
         Material(
@@ -95,11 +94,11 @@ showContextDialog(BuildContext context, BaseModel model) {
           surfaceTintColor: Colors.transparent,
           child: ListTile(
             onTap: () {},
-            leading: Icon(Icons.file_download_outlined),
-            title: Text(
+            leading: const Icon(Icons.file_download_outlined),
+            title: const Text(
               "Download",
             ),
-            trailing: PremiumChip(),
+            trailing: const PremiumChip(),
           ),
         ),
         Material(
@@ -108,8 +107,8 @@ showContextDialog(BuildContext context, BaseModel model) {
           surfaceTintColor: Colors.transparent,
           child: ListTile(
             onTap: () {},
-            leading: Icon(Icons.playlist_add),
-            title: Text("Save to playlist"),
+            leading: const Icon(Icons.playlist_add),
+            title: const Text("Save to playlist"),
           ),
         ),
         Material(
@@ -118,8 +117,8 @@ showContextDialog(BuildContext context, BaseModel model) {
           surfaceTintColor: Colors.transparent,
           child: ListTile(
             onTap: () {},
-            leading: Icon(Icons.album_outlined),
-            title: Text("Go to album"),
+            leading: const Icon(Icons.album_outlined),
+            title: const Text("Go to album"),
           ),
         ),
         Material(
@@ -128,8 +127,8 @@ showContextDialog(BuildContext context, BaseModel model) {
           surfaceTintColor: Colors.transparent,
           child: ListTile(
             onTap: () {},
-            leading: Icon(Icons.person_outline),
-            title: Text("Go to artist"),
+            leading: const Icon(Icons.person_outline),
+            title: const Text("Go to artist"),
           ),
         ),
         // Material(
@@ -158,8 +157,8 @@ showContextDialog(BuildContext context, BaseModel model) {
           surfaceTintColor: Colors.transparent,
           child: ListTile(
             onTap: () {},
-            leading: Icon(Icons.groups_3_outlined),
-            title: Text("View song credits"),
+            leading: const Icon(Icons.groups_3_outlined),
+            title: const Text("View song credits"),
           ),
         ),
         Material(
@@ -168,8 +167,8 @@ showContextDialog(BuildContext context, BaseModel model) {
           surfaceTintColor: Colors.transparent,
           child: ListTile(
             onTap: () {},
-            leading: Icon(Icons.share),
-            title: Text("Share"),
+            leading: const Icon(Icons.share),
+            title: const Text("Share"),
           ),
         ),
         SizedBox(

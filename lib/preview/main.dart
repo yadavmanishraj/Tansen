@@ -7,10 +7,12 @@ import 'package:tansen/src/widgets/basics.dart';
 import 'animated.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -18,9 +20,9 @@ class MyApp extends StatelessWidget {
           fontFamily: "Inter", useMaterial3: true, brightness: Brightness.dark),
       home: Scaffold(
         appBar: AppBar(
-          title: Text('Animated Gradient Mesh'),
+          title: const Text('Animated Gradient Mesh'),
         ),
-        body: AnimatedGradientMesh(),
+        body: const AnimatedGradientMesh(),
       ),
     );
   }
@@ -174,7 +176,7 @@ class PlaylistDetailsPage extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 4.0),
                   child: IconButton.filledTonal(
                       style: IconButton.styleFrom(
-                          padding: EdgeInsets.all(14),
+                          padding: const EdgeInsets.all(14),
                           backgroundColor: Theme.of(context)
                               .colorScheme
                               .inversePrimary
@@ -186,7 +188,7 @@ class PlaylistDetailsPage extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 4.0),
                   child: IconButton.filledTonal(
                       style: IconButton.styleFrom(
-                          padding: EdgeInsets.all(14),
+                          padding: const EdgeInsets.all(14),
                           backgroundColor: Theme.of(context)
                               .colorScheme
                               .inversePrimary
@@ -207,7 +209,7 @@ class PlaylistDetailsPage extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 4.0),
                   child: IconButton.filledTonal(
                       style: IconButton.styleFrom(
-                          padding: EdgeInsets.all(14),
+                          padding: const EdgeInsets.all(14),
                           backgroundColor: Theme.of(context)
                               .colorScheme
                               .inversePrimary
@@ -219,7 +221,7 @@ class PlaylistDetailsPage extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 4.0),
                   child: IconButton.filledTonal(
                       style: IconButton.styleFrom(
-                          padding: EdgeInsets.all(14),
+                          padding: const EdgeInsets.all(14),
                           backgroundColor: Theme.of(context)
                               .colorScheme
                               .inversePrimary

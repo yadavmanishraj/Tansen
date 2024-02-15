@@ -1,17 +1,10 @@
 import 'dart:ui';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:muisc_repository/muisc_repository.dart';
 import 'package:tansen/main.dart';
-import 'package:tansen/src/features/player/bloc/music_player_bloc.dart';
 import 'package:tansen/src/features/player/view/mini_player_widget.dart';
-import 'package:tansen/src/features/player/view/play_pause_button.dart';
 import 'package:tansen/src/features/player/view/player_progress_view.dart';
-import 'package:tansen/src/widgets/art_display.dart';
 
 extension _ on int {
   String get route {
@@ -28,10 +21,11 @@ extension on String {
   get index {
     if (this == "/") return 0;
     if (this == "/explore") return 1;
-    if (this == "/library")
+    if (this == "/library") {
       return 2;
-    else
+    } else {
       return 0;
+    }
   }
 }
 
@@ -68,8 +62,8 @@ class _ScaffoldWithNavigatorState extends State<ScaffoldWithNavigator> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   const MiniPlayerWidget(),
-                  PlayerProgressView(),
-                  SizedBox(height: 16),
+                  const PlayerProgressView(),
+                  const SizedBox(height: 16),
                   NavigationBar(
                     elevation: 0,
                     backgroundColor: Colors.transparent,

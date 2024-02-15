@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:muisc_repository/muisc_repository.dart';
 import 'package:tansen/download/download_page.dart';
@@ -7,7 +6,6 @@ import 'package:tansen/src/features/home/home.dart';
 import 'package:tansen/src/features/search/view/search_view.dart';
 import 'package:tansen/src/routes/view/scaffold_with_navigator.dart';
 import 'package:tansen/src/widgets/details_page.dart';
-import 'package:animations/animations.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 final _shellNavigatorKey = GlobalKey<NavigatorState>();
@@ -25,7 +23,7 @@ final routes = GoRouter(
           routes: [
             GoRoute(
               path: HomeRoute.route,
-              builder: (context, state) => HomeRoute(),
+              builder: (context, state) => const HomeRoute(),
             ),
           ],
         ),

@@ -64,7 +64,7 @@ class _SearchPageState extends State<SearchPage> {
 }
 
 class _SearchView extends StatelessWidget {
-  const _SearchView({super.key, required this.data});
+  const _SearchView({required this.data});
   final List<BaseModel> data;
   @override
   Widget build(BuildContext context) {

@@ -1,6 +1,4 @@
 import 'package:jiosaavn_api/jiosaavn_api.dart';
-import 'package:jiosaavn_api/src/models/base_model_details.dart';
-import 'package:jiosaavn_api/src/models/song_details.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'album_details.g.dart';

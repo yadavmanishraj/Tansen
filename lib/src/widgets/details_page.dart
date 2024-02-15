@@ -1,5 +1,3 @@
-import 'dart:developer';
-import 'dart:io';
 import 'dart:ui';
 
 import 'package:cached_network_image/cached_network_image.dart';
@@ -10,7 +8,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:muisc_repository/muisc_repository.dart';
 import 'package:tansen/download/download_bloc.dart';
 import 'package:tansen/download/download_progress.dart';
-import 'package:tansen/download/song_downloader.dart';
 import 'package:tansen/src/features/player/bloc/music_player_bloc.dart';
 import 'package:tansen/src/widgets/art_display.dart';
 import 'package:tansen/src/widgets/basics.dart';
@@ -150,7 +147,7 @@ class _PlaylistDetailsPageState extends State<PlaylistDetailsPage> {
                                   const EdgeInsets.symmetric(horizontal: 4.0),
                               child: IconButton.filledTonal(
                                   style: IconButton.styleFrom(
-                                      padding: EdgeInsets.all(14),
+                                      padding: const EdgeInsets.all(14),
                                       backgroundColor: Theme.of(context)
                                           .colorScheme
                                           .inversePrimary
@@ -170,7 +167,7 @@ class _PlaylistDetailsPageState extends State<PlaylistDetailsPage> {
                                   const EdgeInsets.symmetric(horizontal: 4.0),
                               child: IconButton.filledTonal(
                                   style: IconButton.styleFrom(
-                                      padding: EdgeInsets.all(14),
+                                      padding: const EdgeInsets.all(14),
                                       backgroundColor: Theme.of(context)
                                           .colorScheme
                                           .inversePrimary
@@ -210,7 +207,7 @@ class _PlaylistDetailsPageState extends State<PlaylistDetailsPage> {
                                   const EdgeInsets.symmetric(horizontal: 4.0),
                               child: IconButton.filledTonal(
                                   style: IconButton.styleFrom(
-                                      padding: EdgeInsets.all(14),
+                                      padding: const EdgeInsets.all(14),
                                       backgroundColor: Theme.of(context)
                                           .colorScheme
                                           .inversePrimary
@@ -223,7 +220,7 @@ class _PlaylistDetailsPageState extends State<PlaylistDetailsPage> {
                                   const EdgeInsets.symmetric(horizontal: 4.0),
                               child: IconButton.filledTonal(
                                   style: IconButton.styleFrom(
-                                      padding: EdgeInsets.all(14),
+                                      padding: const EdgeInsets.all(14),
                                       backgroundColor: Theme.of(context)
                                           .colorScheme
                                           .inversePrimary
@@ -447,7 +444,7 @@ class _DetailsHeaderState extends State<DetailsHeader> {
                 child: Column(
                   children: [
                     const SizedBox(height: 40),
-                    Text('songs'),
+                    const Text('songs'),
                     Text(widget.type.toUpperCase()),
                     const SizedBox(height: 16),
                     SizedBox(
@@ -462,14 +459,14 @@ class _DetailsHeaderState extends State<DetailsHeader> {
                       ),
                     ),
                     const SizedBox(height: 8),
-                    Padding(
+                    const Padding(
                       padding: EdgeInsets.symmetric(horizontal: 16.0),
                       child: SizedBox(height: 45),
                     ),
                     Text(
                       widget.subtitle,
                       maxLines: 1,
-                      style: TextStyle(color: Colors.grey, fontSize: 16),
+                      style: const TextStyle(color: Colors.grey, fontSize: 16),
                     )
                   ],
                 ),

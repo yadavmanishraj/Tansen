@@ -89,7 +89,7 @@ class _MiniPlayerWidgetState extends State<MiniPlayerWidget> {
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(0)),
                       context: context,
-                      builder: (context) => MaxPlayer(),
+                      builder: (context) => const MaxPlayer(),
                     );
                   },
                   child: Padding(

@@ -26,6 +26,7 @@ class RadioModel extends BaseModel {
 
   factory RadioModel.fromJson(Map<String, dynamic> json) =>
       _$RadioModelFromJson(json);
+  @override
   Map<String, dynamic> toJson() => _$RadioModelToJson(this);
 }
 

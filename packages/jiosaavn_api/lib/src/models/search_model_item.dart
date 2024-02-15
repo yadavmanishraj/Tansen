@@ -5,6 +5,7 @@ part 'search_model_item.g.dart';
 
 @JsonSerializable()
 class SearchModelItem extends BaseModel {
+  @override
   @JsonKey(name: "url")
   final String permaUrl;
 

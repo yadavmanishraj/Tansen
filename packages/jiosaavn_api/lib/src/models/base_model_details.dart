@@ -8,6 +8,7 @@ part 'base_model_details.g.dart';
 
 @JsonSerializable()
 class BaseModelDetails extends BaseModel {
+  @override
   @JsonKey(name: "explicit_content")
   final String explicitContent;
   @JsonKey(name: "header_desc")

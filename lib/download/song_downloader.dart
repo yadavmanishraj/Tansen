@@ -1,16 +1,13 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:async';
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter_downloader/flutter_downloader.dart';
-import 'package:get_it/get_it.dart';
 import 'package:isar/isar.dart';
 import 'package:muisc_repository/muisc_repository.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:rxdart/rxdart.dart';
 
-import 'package:tansen/download/download_bloc.dart';
 import 'package:tansen/download/download_model.dart';
 import 'package:tansen/download/song_collection.dart';
 import 'package:tansen/download/task_manager.dart';

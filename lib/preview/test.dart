@@ -62,7 +62,7 @@ class _ScrollStopPageViewState extends State<ScrollStopPageView> {
 }
 
 void main() {
-  runApp(MaterialApp(
+  runApp(const MaterialApp(
     home: ScrollStopPageView(),
   ));
 }

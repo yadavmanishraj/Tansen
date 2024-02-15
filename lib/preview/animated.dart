@@ -15,7 +15,7 @@ class _AnimatedGradientMeshState extends State<AnimatedGradientMesh>
   void initState() {
     super.initState();
     _controller = AnimationController(
-      duration: Duration(seconds: 5),
+      duration: const Duration(seconds: 5),
       vsync: this,
     )..repeat();
   }
